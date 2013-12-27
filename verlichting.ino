@@ -19,7 +19,7 @@ unsigned int lastChange[32]; // NUM_BUTTONS
 void setup()
 {
     Serial.begin(9600);
-    Serial.println("Init begin");
+    Serial.println(F("Init begin"));
     for(int i=0;i<32;i++)
     {
         devices[i]=Device::restore(i);
@@ -32,7 +32,7 @@ void setup()
         buttonState[i] = RELEASED;
     }
 
-    Serial.println("Init done");
+    Serial.println(F("Init done"));
 }
 
 char line[64];
@@ -51,7 +51,7 @@ void handleInput()
         t = strtok(NULL, " ");
         if(tidx >= 10)
         {
-            Serial.println("Parser error");
+            Serial.println(F("Parser error"));
             return;
         }
     }
@@ -174,11 +174,11 @@ void handleInput()
             {
                 if(devices[i] != NULL)
                 {
-                    Serial.print("Saving ");
+                    Serial.print(F("Saving "));
                     Serial.print(i);
-                    Serial.print(" ...");
+                    Serial.print(F(" ..."));
                     devices[i]->saveSettings();
-                    Serial.println("done");
+                    Serial.println(F("done"));
                 }
             }
         }
@@ -191,13 +191,13 @@ void handleInput()
     }
     else if(!strcmp(tokens[0],"reset"))
     {
-        Serial.println("Resetting");
+        Serial.println(F("Resetting"));
         wdt_enable (WDTO_1S);  // reset after one second, if no "pat the dog" received
         while(1);
     }
     else
     {
-        Serial.print("Syntax error with token ");
+        Serial.print(F("Syntax error with token "));
         Serial.println(tokens[0]);
     }
 }
@@ -256,9 +256,9 @@ void loop()
         {
             if(buttonState[i] == PRESSED)
             {
-                Serial.print("Button ");
+                Serial.print(F("Button "));
                 Serial.print(i,DEC);
-                Serial.println(" pressed");
+                Serial.println((" pressed"));
                 Device *d = Device::getDeviceForButton(i);
                 if(d != NULL)
                 {
