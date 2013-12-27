@@ -8,7 +8,7 @@
 class Dimmer: public Relay
 {
     public:
-        Dimmer(int id, int relay,int buttonPlus,int buttonMin,int pwm);
+        Dimmer(int id, int board, int relay,int buttonPlus,int buttonMin,int pwm);
         Dimmer(int id, unsigned char *initData);
         virtual ~Dimmer();
         virtual void press(int button,int previousState);

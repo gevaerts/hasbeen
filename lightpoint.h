@@ -6,7 +6,7 @@
 class Lightpoint: public Relay
 {
     public:
-        Lightpoint(int id, int relay,int button);
+        Lightpoint(int id, int board, int relay,int button);
         Lightpoint(int id, unsigned char *initData);
         virtual ~Lightpoint();
         virtual void press(int button,int previousState);

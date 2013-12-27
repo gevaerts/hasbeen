@@ -7,7 +7,7 @@ void Lightpoint::init()
     registerButton(_button, this);
 }
 
-Lightpoint::Lightpoint(int id, int relay, int button):Relay(id, relay, ONOFFLIGHT)
+Lightpoint::Lightpoint(int id, int board, int relay, int button):Relay(id, board, relay, ONOFFLIGHT)
 {
     _button = button;
     init();

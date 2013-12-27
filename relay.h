@@ -6,8 +6,8 @@
 class Relay: public Device
 {
     public:
-        Relay(int id, int relay);
-        Relay(int id, int relay, enum DeviceType type);
+        Relay(int id, int board, int relay);
+        Relay(int id, int board, int relay, enum DeviceType type);
         Relay(int id, unsigned char *initdata);
         virtual ~Relay();
         virtual void press(int button,int previousState) {};
@@ -20,6 +20,7 @@ class Relay: public Device
     private:
         void init();
         int _relay;
+        int _board;
         int _relayState;
 };
 #endif

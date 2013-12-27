@@ -1,8 +1,11 @@
 #include <Arduino.h>
 #include <EEPROM.h>
+#include <bv4627.h>
+#include <Wire.h>
 #include "setup.h"
 #include "lightpoint.h"
 #include "dimmer.h"
+#include "relayboard.h"
 #include "device.h"
 #include <avr/wdt.h>
 
@@ -94,18 +97,19 @@ void handleInput()
     {
         if(!strcmp(tokens[1],"dimmer"))
         {
-            if(tidx != 7)
+            if(tidx != 8)
             {
-                Serial.println(F("define dimmer <id> <relay> <buttonPlus> <buttonMin> <pwm>"));
+                Serial.println(F("define dimmer <id> <board> <relay> <buttonPlus> <buttonMin> <pwm>"));
             }
             else
             {
-                int id, relay, buttonPlus, buttonMin, pwm;
+                int id, board, relay, buttonPlus, buttonMin, pwm;
                 id = atoi(tokens[2]);
-                relay = atoi(tokens[3]);
-                buttonPlus = atoi(tokens[4]);
-                buttonMin = atoi(tokens[5]);
-                pwm = atoi(tokens[6]);
+                board = atoi(tokens[3]);
+                relay = atoi(tokens[4]);
+                buttonPlus = atoi(tokens[5]);
+                buttonMin = atoi(tokens[6]);
+                pwm = atoi(tokens[7]);
 
                 if(id < 0 || id >= ARRAY_SIZE(devices))
                     Serial.println(F("id out of range"));
@@ -123,7 +127,7 @@ void handleInput()
                     Serial.println(F("buttonMin already in use"));
                 else
                 {
-                    Device *d = new Dimmer(id, relay,buttonPlus,buttonMin,pwm);
+                    Device *d = new Dimmer(id, board, relay,buttonPlus,buttonMin,pwm);
                     devices[id]=d;
                     d->printInfo();
                 }
@@ -131,16 +135,17 @@ void handleInput()
         }
         else if(!strcmp(tokens[1],"lightpoint"))
         {
-            if(tidx != 5)
+            if(tidx != 6)
             {
-                Serial.println(F("define lightpoint <id> <relay> <button>"));
+                Serial.println(F("define lightpoint <id> <board> <relay> <button>"));
             }
             else
             {
-                int id, relay, button;
+                int id, board, relay, button;
                 id = atoi(tokens[2]);
-                relay = atoi(tokens[3]);
-                button = atoi(tokens[4]);
+                board = atoi(tokens[3]);
+                relay = atoi(tokens[4]);
+                button = atoi(tokens[5]);
 
                 if(id < 0 || id >= ARRAY_SIZE(devices))
                     Serial.println(F("id out of range"));
@@ -154,7 +159,31 @@ void handleInput()
                     Serial.println(F("button already in use"));
                 else
                 {
-                    Device *d = new Lightpoint(id, relay,button);
+                    Device *d = new Lightpoint(id, board, relay,button);
+                    devices[id]=d;
+                    d->printInfo();
+                }
+            }
+        }
+        else if(!strcmp(tokens[1],"relayboard"))
+        {
+            if(tidx != 4)
+            {
+                Serial.println(F("define relayboard <id> <address>"));
+            }
+            else
+            {
+                int id, address;
+                id = atoi(tokens[2]);
+                address = atoi(tokens[3]);
+
+                if(id < 0 || id >= ARRAY_SIZE(devices))
+                    Serial.println(F("id out of range"));
+                else if(devices[id] != NULL)
+                    Serial.println(F("id not empty"));
+                else
+                {
+                    Device *d = new RelayBoard(id, address);
                     devices[id]=d;
                     d->printInfo();
                 }
@@ -162,7 +191,7 @@ void handleInput()
         }
         else
         {
-            Serial.println(F("define {dimmer|lightpoint} ..."));
+            Serial.println(F("define {dimmer|lightpoint|relayboard} ..."));
         }
     }
     else if(!strcmp(tokens[0],"save"))

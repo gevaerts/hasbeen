@@ -3,17 +3,20 @@
 #include "device.h"
 #include "setup.h"
 #include "relay.h"
+#include "relayboard.h"
 #include "lightpoint.h"
 #include "dimmer.h"
 
 unsigned char Device::scratch[DEVICE_EEPROM_SIZE];
 Device *Device::_devicesByButton[32]; //TODO: NUM_BUTTONS
+Device *Device::_devicesById[32]; 
 
 Device::Device(int id, enum DeviceType type)
 {
     _id = id;
     _type = type;
     _name[0]=0;
+    _devicesById[id]=this;
 }
 
 Device::Device(int id, unsigned char *initData)
@@ -26,6 +29,7 @@ Device::Device(int id, unsigned char *initData)
     _offset++;
     memcpy(_name,initData+_offset,16);
     _offset += 16;
+    _devicesById[id]=this;
 }
 
 
@@ -106,6 +110,9 @@ Device *Device::restore(int id)
             break;
         case TIMEDRELAY:
             break;
+        case RELAYBOARD:
+            device = new RelayBoard(id,scratch);
+            break;
         default:
             break;
     }
@@ -120,5 +127,10 @@ Device *Device::getDeviceForButton(int button)
 void Device::registerButton(int button, Device *device)
 {
     _devicesByButton[button] = device;
+}
+
+Device *Device::getDeviceForId(int id)
+{
+    return _devicesById[id];
 }
 

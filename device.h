@@ -14,6 +14,7 @@ enum DeviceType
     ONOFFLIGHT,
     RELAY,
     TIMEDRELAY,
+    RELAYBOARD,
     UNDEFINED = 255
 };
 
@@ -31,6 +32,11 @@ class Device
         virtual void press(int button,int previousState) {};
         static Device *restore(int id);
         static Device *getDeviceForButton(int button);
+        static Device *getDeviceForId(int id);
+        enum DeviceType getType()
+        {
+            return _type;
+        }
     protected:
         virtual int saveConfig(unsigned char *initData);
         static void registerButton(int button, Device *device);
@@ -41,5 +47,6 @@ class Device
         enum DeviceType _type;
         static unsigned char scratch[DEVICE_EEPROM_SIZE];
         static Device *_devicesByButton[32]; //TODO: NUM_BUTTONS
+        static Device *_devicesById[32]; 
 };
 #endif

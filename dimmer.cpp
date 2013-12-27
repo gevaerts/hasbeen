@@ -12,7 +12,7 @@ void Dimmer::init()
     setOn(1);
 }
 
-Dimmer::Dimmer(int id, int relay,int buttonPlus,int buttonMin,int pwm):Relay(id, relay, DIMMEDLIGHT)
+Dimmer::Dimmer(int id, int relay, int board, int buttonPlus,int buttonMin,int pwm):Relay(id, board, relay, DIMMEDLIGHT)
 {
     _buttonPlus = buttonPlus;
     _buttonMin = buttonMin;
