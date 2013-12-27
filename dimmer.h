@@ -8,10 +8,16 @@
 class Dimmer: public Relay
 {
     public:
-        Dimmer(int relay,int buttonPlus,int buttonMin,int pwm);
+        Dimmer(int id, int relay,int buttonPlus,int buttonMin,int pwm);
+        Dimmer(int id, unsigned char *initData);
+        virtual ~Dimmer();
         virtual void press(int button,int previousState);
         virtual int respondsToButton(int button);
+        virtual void printInfo();
+    protected:
+        virtual int saveConfig(unsigned char *initData);
     private:
+        void init();
         void writeBrightness();
         int _buttonPlus;
         int _buttonMin;

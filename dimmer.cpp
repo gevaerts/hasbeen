@@ -2,7 +2,17 @@
 #include "dimmer.h"
 #include "setup.h"
 
-Dimmer::Dimmer(int relay,int buttonPlus,int buttonMin,int pwm):Relay(relay)
+void Dimmer::init()
+{
+    registerButton(_buttonPlus, this);
+    registerButton(_buttonMin, this);
+
+    pinMode(pwms[_pwm],OUTPUT);
+    writeBrightness();
+    setOn(1);
+}
+
+Dimmer::Dimmer(int id, int relay,int buttonPlus,int buttonMin,int pwm):Relay(id, relay, DIMMEDLIGHT)
 {
     _buttonPlus = buttonPlus;
     _buttonMin = buttonMin;
@@ -11,10 +21,54 @@ Dimmer::Dimmer(int relay,int buttonPlus,int buttonMin,int pwm):Relay(relay)
 
     _min = 8;
     _max = 128;
+    init();
+}
 
-    pinMode(pwms[pwm],OUTPUT);
-    writeBrightness();
-    setOn(1);
+Dimmer::Dimmer(int id, unsigned char *initData) : Relay(id, initData)
+{
+    Serial.println(F("Restoring dimmer data"));
+    _buttonPlus = initData[_offset++];
+    _buttonMin = initData[_offset++];
+    _pwm = initData[_offset++];
+    _brightness = DIMMER_STEPS / 2; // TODO: nvram stuff
+    _min = initData[_offset++];
+    _max = initData[_offset++];
+    init();
+}
+
+Dimmer::~Dimmer()
+{
+    Serial.println(F("Deleting dimmer"));
+    registerButton(_buttonPlus, NULL);
+    registerButton(_buttonMin, NULL);
+}
+
+int Dimmer::saveConfig(unsigned char *initData)
+{
+    Serial.println(F("Saving dimmer data"));
+    int offset = Relay::saveConfig(initData);
+    initData[offset++]=_buttonPlus;
+    initData[offset++]=_buttonMin;
+    initData[offset++]=_pwm;
+    initData[offset++]=_min;
+    initData[offset++]=_max;
+    return offset;
+}
+
+
+void Dimmer::printInfo()
+{
+    Relay::printInfo();
+    Serial.print(F("\tbutton + # "));
+    Serial.println(_buttonPlus);
+    Serial.print(F("\tbutton - # "));
+    Serial.println(_buttonMin);
+    Serial.print(F("\tpwm # "));
+    Serial.println(_pwm);
+    Serial.print(F("\tmin output "));
+    Serial.println(_min);
+    Serial.print(F("\tmax output "));
+    Serial.println(_max);
 }
 
 void Dimmer::writeBrightness()
@@ -34,12 +88,12 @@ int Dimmer::respondsToButton(int button)
 
 void Dimmer::press(int button,int previousState)
 {
-    Serial.print("Dimmer press ");
+    Serial.print(F("Dimmer press "));
     // Dimmers will handle continuous presses, so we can ignore previousState
     int switchOff = 0;
     if(button == _buttonPlus)
     {
-        Serial.print("Increment ");
+        Serial.print(F("Increment "));
         Serial.println(_pwm,DEC);
 
         int otherState = digitalRead(buttons[_buttonMin]);
@@ -50,7 +104,7 @@ void Dimmer::press(int button,int previousState)
     }
     else if(button == _buttonMin)
     {
-        Serial.print("Decrement ");
+        Serial.print(F("Decrement "));
         Serial.println(_pwm,DEC);
 
         int otherState = digitalRead(buttons[_buttonPlus]);
@@ -59,7 +113,7 @@ void Dimmer::press(int button,int previousState)
         else
             _brightness = constrain(_brightness - 1, 0, DIMMER_STEPS);
     }
-    Serial.print("Dimmer brightness ");
+    Serial.print(F("Dimmer brightness "));
         Serial.println(_brightness,DEC);
     if(_brightness == 0)
         switchOff = 1;

@@ -1,44 +1,16 @@
-#include "Arduino.h"
+#include <Arduino.h>
+#include <EEPROM.h>
 #include "setup.h"
 #include "lightpoint.h"
 #include "dimmer.h"
+#include "device.h"
+#include <avr/wdt.h>
 
 #define STATUS1 22
 #define STATUS2 23
 
+Device *devices[32];
 
-Dimmer dimmers[] =
-{
-    Dimmer(0,0,1,0),
-    Dimmer(1,2,3,1),
-    Dimmer(2,4,5,2),
-    Dimmer(3,6,7,3),
-    Dimmer(4,8,9,4),
-    Dimmer(5,10,11,5),
-    Dimmer(6,12,13,6),
-    Dimmer(7,14,15,7),
-};
-Lightpoint lightpoints[] =
-{
-    Lightpoint(8,16),
-    Lightpoint(9,17),
-    Lightpoint(10,18),
-    Lightpoint(11,19),
-    Lightpoint(12,20),
-    Lightpoint(13,21),
-    Lightpoint(14,22),
-    Lightpoint(15,23),
-    Lightpoint(16,24),
-    Lightpoint(17,25),
-    Lightpoint(18,26),
-    Lightpoint(19,27),
-    Lightpoint(20,28),
-    Lightpoint(21,29),
-    Lightpoint(22,30),
-    Lightpoint(23,31)
-};
-
-Relay *lightpointsByButton[32]; // NUM_BUTTONS
 int buttonState[32]; // NUM_BUTTONS
 int buttonCount[32]; // NUM_BUTTONS
 unsigned int iteration;
@@ -48,33 +20,11 @@ void setup()
 {
     Serial.begin(9600);
     Serial.println("Init begin");
-    int i,j,k;
-    for(i=0;i<ARRAY_SIZE(lightpointsByButton);i++)
+    for(int i=0;i<32;i++)
     {
-        for(j=0;j<ARRAY_SIZE(lightpoints);j++)
-        {
-            if(lightpoints[j].respondsToButton(i))
-            {
-                if(lightpointsByButton[i] != NULL)
-                {
-                    // Error!
-                }
-                lightpointsByButton[i] = &lightpoints[j];
-            }
-        }
-        for(j=0;j<ARRAY_SIZE(dimmers);j++)
-        {
-            if(dimmers[j].respondsToButton(i))
-            {
-                if(lightpointsByButton[i] != NULL)
-                {
-                    // Error!
-                }
-                lightpointsByButton[i] = &dimmers[j];
-            }
-        }
+        devices[i]=Device::restore(i);
     }
-    for(i=0;i<ARRAY_SIZE(buttonState);i++)
+    for(int i=0;i<ARRAY_SIZE(buttonState);i++)
     {
         pinMode(buttons[i],INPUT);
         digitalWrite(buttons[i],HIGH); // Enable pull-up
@@ -82,28 +32,166 @@ void setup()
         buttonState[i] = RELEASED;
     }
 
-    // Startup animation
-#if 0
-    for(k=0;k<2;k++)
+    Serial.println("Init done");
+}
+
+char line[64];
+char lidx = 0;
+
+void handleInput()
+{
+    char *tokens[10];
+    char *t;
+    int tidx = 0;
+    t=strtok(line," ");
+
+    while(t != NULL)
     {
-        for(j=0;j<NUM_RELAYS;j+=8)
+        tokens[tidx++] = t;
+        t = strtok(NULL, " ");
+        if(tidx >= 10)
         {
-            for(i=j;i<j+8 && i<NUM_RELAYS;i++)
-                digitalWrite(relays[i],HIGH);
-            delay(500);
-            for(i=j;i<j+8 && i<NUM_RELAYS;i++)
-                digitalWrite(relays[i],LOW);
+            Serial.println("Parser error");
+            return;
         }
     }
-    for(k=0;k<3;k++)
-        for(i=0;i<NUM_RELAYS;i++)
+
+    if(tidx == 0)
+    {
+        // No command was given
+        return;
+    }
+    else if(!strcmp(tokens[0],"show"))
+    {
+        for(int i=0;i<32;i++)
         {
-            digitalWrite(relays[i],HIGH);
-            delay(10);
-            digitalWrite(relays[i],LOW);
+            if(devices[i]!=NULL)
+                devices[i]->printInfo();
         }
-#endif
-    Serial.println("Init done");
+    }
+    else if(!strcmp(tokens[0],"setname") && tidx > 1)
+    {
+        int id = atoi(tokens[1]);
+        char name[16]="";
+        for(int i=2;i<tidx;i++)
+        {
+            strncat(name,tokens[i],16);
+            strncat(name," ",16);
+        }
+        if(devices[id] != NULL)
+            devices[id]->setName(name);
+    }
+    else if(!strcmp(tokens[0],"delete") && tidx ==2)
+    {
+        int id = atoi(tokens[1]);
+        if(devices[id] != NULL)
+        {
+            delete devices[id];
+            devices[id] = NULL;
+        }
+    }
+    else if(!strcmp(tokens[0],"define") && tidx > 1)
+    {
+        if(!strcmp(tokens[1],"dimmer"))
+        {
+            if(tidx != 7)
+            {
+                Serial.println(F("define dimmer <id> <relay> <buttonPlus> <buttonMin> <pwm>"));
+            }
+            else
+            {
+                int id, relay, buttonPlus, buttonMin, pwm;
+                id = atoi(tokens[2]);
+                relay = atoi(tokens[3]);
+                buttonPlus = atoi(tokens[4]);
+                buttonMin = atoi(tokens[5]);
+                pwm = atoi(tokens[6]);
+                Device *d = new Dimmer(id, relay,buttonPlus,buttonMin,pwm);
+                devices[id]=d;
+                d->printInfo();
+            }
+        }
+        else if(!strcmp(tokens[1],"lightpoint"))
+        {
+            if(tidx != 5)
+            {
+                Serial.println(F("define lightpoint <id> <relay> <button>"));
+            }
+            else
+            {
+                int id, relay, button;
+                id = atoi(tokens[2]);
+                relay = atoi(tokens[3]);
+                button = atoi(tokens[4]);
+
+                Device *d = new Lightpoint(id, relay,button);
+                devices[id]=d;
+                d->printInfo();
+            }
+        }
+        else
+        {
+            Serial.println(F("define {dimmer|lightpoint} ..."));
+        }
+    }
+    else if(!strcmp(tokens[0],"delete") && tidx > 1)
+    {
+        int id = atoi(tokens[1]);
+    }
+    else if(!strcmp(tokens[0],"save"))
+    {
+        if(tidx == 1)
+        {
+            // Save all
+            for(int i=0;i<32;i++)
+            {
+                if(devices[i] != NULL)
+                {
+                    Serial.print("Saving ");
+                    Serial.print(i);
+                    Serial.print(" ...");
+                    devices[i]->saveSettings();
+                    Serial.println("done");
+                }
+            }
+        }
+        else
+        {
+            int id = atoi(tokens[1]);
+            devices[id]->saveSettings();
+            // Save one
+        }
+    }
+    else if(!strcmp(tokens[0],"reset"))
+    {
+        Serial.println("Resetting");
+        wdt_enable (WDTO_1S);  // reset after one second, if no "pat the dog" received
+        while(1);
+    }
+    else
+    {
+        Serial.print("Syntax error with token ");
+        Serial.println(tokens[0]);
+    }
+}
+
+void serialEvent()
+{
+    while(Serial.available())
+    {
+        int c = Serial.read();
+        if(c >= 0)
+        {
+            if(lidx >= 63 || c == '\n')
+            {
+                line[lidx] = 0;
+                lidx = 0;
+                handleInput();
+                continue;
+            }
+            line[lidx++] = c;
+        }
+    }
 }
 
 int status = 0;
@@ -144,13 +232,14 @@ void loop()
                 Serial.print("Button ");
                 Serial.print(i,DEC);
                 Serial.println(" pressed");
-                if(lightpointsByButton[i] != NULL)
+                Device *d = Device::getDeviceForButton(i);
+                if(d != NULL)
                 {
                     int previous = buttonState[i];
                     if(changed)
                         previous = !buttonState[i];
 
-                    lightpointsByButton[i]->press(i,previous);
+                    d->press(i,previous);
                 }
             }
         }
