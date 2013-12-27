@@ -224,11 +224,14 @@ void serialEvent()
 int status = 0;
 void loop()
 {
-    status = !status;
-    pinMode(STATUS1,OUTPUT);
-    pinMode(STATUS2,OUTPUT);
-    digitalWrite(STATUS1,status);
-    digitalWrite(STATUS2,!status);
+    if(iteration%50 == 0)
+    {
+        status = !status;
+        pinMode(STATUS1,OUTPUT);
+        pinMode(STATUS2,OUTPUT);
+        digitalWrite(STATUS1,status);
+        digitalWrite(STATUS2,!status);
+    }
 
     delay(10);
     iteration++;
