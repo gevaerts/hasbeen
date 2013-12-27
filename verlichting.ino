@@ -12,8 +12,6 @@
 #define STATUS1 22
 #define STATUS2 23
 
-Device *devices[32];
-
 int buttonState[32]; // NUM_BUTTONS
 int buttonCount[32]; // NUM_BUTTONS
 unsigned int iteration;
@@ -25,7 +23,7 @@ void setup()
     Serial.println(F("Init begin"));
     for(int i=0;i<32;i++)
     {
-        devices[i]=Device::restore(i);
+        Device::restore(i);
     }
     for(int i=0;i<ARRAY_SIZE(buttonState);i++)
     {
@@ -68,8 +66,9 @@ void handleInput()
     {
         for(int i=0;i<32;i++)
         {
-            if(devices[i]!=NULL)
-                devices[i]->printInfo();
+            Device *d = Device::getDeviceForId(i);
+            if(d!=NULL)
+                d->printInfo();
         }
     }
     else if(!strcmp(tokens[0],"setname") && tidx > 1)
@@ -81,17 +80,16 @@ void handleInput()
             strncat(name,tokens[i],16);
             strncat(name," ",16);
         }
-        if(devices[id] != NULL)
-            devices[id]->setName(name);
+        Device *d = Device::getDeviceForId(id);
+        if(d != NULL)
+            d->setName(name);
     }
     else if(!strcmp(tokens[0],"delete") && tidx ==2)
     {
         int id = atoi(tokens[1]);
-        if(devices[id] != NULL)
-        {
-            delete devices[id];
-            devices[id] = NULL;
-        }
+        Device *d = Device::getDeviceForId(id);
+        if(d != NULL)
+            delete d;
     }
     else if(!strcmp(tokens[0],"define") && tidx > 1)
     {
@@ -111,9 +109,9 @@ void handleInput()
                 buttonMin = atoi(tokens[6]);
                 pwm = atoi(tokens[7]);
 
-                if(id < 0 || id >= ARRAY_SIZE(devices))
+                if(id < 0 || id >= NUM_DEVICES)
                     Serial.println(F("id out of range"));
-                else if(devices[id] != NULL)
+                else if(Device::getDeviceForId(id) != NULL)
                     Serial.println(F("id not empty"));
                 else if(relay < 0 || relay >= NUM_RELAYS)
                     Serial.println(F("relay out of range"));
@@ -128,7 +126,6 @@ void handleInput()
                 else
                 {
                     Device *d = new Dimmer(id, board, relay,buttonPlus,buttonMin,pwm);
-                    devices[id]=d;
                     d->printInfo();
                 }
             }
@@ -147,9 +144,9 @@ void handleInput()
                 relay = atoi(tokens[4]);
                 button = atoi(tokens[5]);
 
-                if(id < 0 || id >= ARRAY_SIZE(devices))
+                if(id < 0 || id >= NUM_DEVICES)
                     Serial.println(F("id out of range"));
-                else if(devices[id] != NULL)
+                else if(Device::getDeviceForId(id) != NULL)
                     Serial.println(F("id not empty"));
                 else if(relay < 0 || relay >= NUM_RELAYS)
                     Serial.println(F("relay out of range"));
@@ -160,7 +157,6 @@ void handleInput()
                 else
                 {
                     Device *d = new Lightpoint(id, board, relay,button);
-                    devices[id]=d;
                     d->printInfo();
                 }
             }
@@ -177,14 +173,13 @@ void handleInput()
                 id = atoi(tokens[2]);
                 address = atoi(tokens[3]);
 
-                if(id < 0 || id >= ARRAY_SIZE(devices))
+                if(id < 0 || id >= NUM_DEVICES)
                     Serial.println(F("id out of range"));
-                else if(devices[id] != NULL)
+                else if(Device::getDeviceForId(id) != NULL)
                     Serial.println(F("id not empty"));
                 else
                 {
                     Device *d = new RelayBoard(id, address);
-                    devices[id]=d;
                     d->printInfo();
                 }
             }
@@ -201,12 +196,13 @@ void handleInput()
             // Save all
             for(int i=0;i<32;i++)
             {
-                if(devices[i] != NULL)
+                Device *d = Device::getDeviceForId(i);
+                if(d != NULL)
                 {
                     Serial.print(F("Saving "));
                     Serial.print(i);
                     Serial.print(F(" ..."));
-                    devices[i]->saveSettings();
+                    d->saveSettings();
                     Serial.println(F("done"));
                 }
             }
@@ -214,7 +210,9 @@ void handleInput()
         else
         {
             int id = atoi(tokens[1]);
-            devices[id]->saveSettings();
+            Device *d = Device::getDeviceForId(id);
+            if(d != NULL)
+                d->saveSettings();
             // Save one
         }
     }

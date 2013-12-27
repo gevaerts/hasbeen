@@ -40,6 +40,7 @@ Device::~Device()
     int baseAddress = _id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
     scratch[0] = _type;
     EEPROM.write(baseAddress, scratch[0]);
+    _devicesById[_id]=NULL;
 }
 
 
@@ -82,7 +83,7 @@ void Device::setName(char *name)
     _name[15]=0;
 }
 
-Device *Device::restore(int id)
+void Device::restore(int id)
 {
     Serial.println(F("Loading device data"));
     Device *device = NULL;
@@ -90,7 +91,7 @@ Device *Device::restore(int id)
     enum DeviceType type = (enum DeviceType) EEPROM.read(baseAddress);
 
     if(type == UNDEFINED)
-        return NULL;
+        return;
 
     scratch[0] = type;
     for(int i=1;i<DEVICE_EEPROM_SIZE;i++)
@@ -116,7 +117,6 @@ Device *Device::restore(int id)
         default:
             break;
     }
-    return device;
 }
 
 Device *Device::getDeviceForButton(int button)
