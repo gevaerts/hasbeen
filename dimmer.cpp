@@ -69,6 +69,8 @@ void Dimmer::printInfo()
     Serial.println(_min);
     Serial.print(F("\tmax output "));
     Serial.println(_max);
+    Serial.print(F("\tcurrent brightness "));
+    Serial.println(_brightness);
 }
 
 void Dimmer::writeBrightness()
@@ -77,8 +79,6 @@ void Dimmer::writeBrightness()
     // TODO non-linear scaling?
     int absoluteBrightness = _min + (_brightness * (_max - _min) / DIMMER_STEPS);
     analogWrite(pwms[_pwm],~absoluteBrightness);
-    //Serial.print("current brightness ");
-    //Serial.println(absoluteBrightness, DEC);
 }
 
 int Dimmer::respondsToButton(int button)
