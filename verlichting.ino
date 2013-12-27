@@ -106,9 +106,27 @@ void handleInput()
                 buttonPlus = atoi(tokens[4]);
                 buttonMin = atoi(tokens[5]);
                 pwm = atoi(tokens[6]);
-                Device *d = new Dimmer(id, relay,buttonPlus,buttonMin,pwm);
-                devices[id]=d;
-                d->printInfo();
+
+                if(id < 0 || id >= ARRAY_SIZE(devices))
+                    Serial.println(F("id out of range"));
+                else if(devices[id] != NULL)
+                    Serial.println(F("id not empty"));
+                else if(relay < 0 || relay >= NUM_RELAYS)
+                    Serial.println(F("relay out of range"));
+                else if(buttonPlus < 0 || buttonPlus >= NUM_BUTTONS)
+                    Serial.println(F("buttonPlus out of range"));
+                else if(Device::getDeviceForButton(buttonPlus) != NULL)
+                    Serial.println(F("buttonPlus already in use"));
+                else if(buttonMin < 0 || buttonMin >= NUM_BUTTONS)
+                    Serial.println(F("buttonMin out of range"));
+                else if(Device::getDeviceForButton(buttonMin) != NULL)
+                    Serial.println(F("buttonMin already in use"));
+                else
+                {
+                    Device *d = new Dimmer(id, relay,buttonPlus,buttonMin,pwm);
+                    devices[id]=d;
+                    d->printInfo();
+                }
             }
         }
         else if(!strcmp(tokens[1],"lightpoint"))
@@ -124,19 +142,28 @@ void handleInput()
                 relay = atoi(tokens[3]);
                 button = atoi(tokens[4]);
 
-                Device *d = new Lightpoint(id, relay,button);
-                devices[id]=d;
-                d->printInfo();
+                if(id < 0 || id >= ARRAY_SIZE(devices))
+                    Serial.println(F("id out of range"));
+                else if(devices[id] != NULL)
+                    Serial.println(F("id not empty"));
+                else if(relay < 0 || relay >= NUM_RELAYS)
+                    Serial.println(F("relay out of range"));
+                else if(button < 0 || button >= NUM_BUTTONS)
+                    Serial.println(F("button out of range"));
+                else if(Device::getDeviceForButton(button) != NULL)
+                    Serial.println(F("button already in use"));
+                else
+                {
+                    Device *d = new Lightpoint(id, relay,button);
+                    devices[id]=d;
+                    d->printInfo();
+                }
             }
         }
         else
         {
             Serial.println(F("define {dimmer|lightpoint} ..."));
         }
-    }
-    else if(!strcmp(tokens[0],"delete") && tidx > 1)
-    {
-        int id = atoi(tokens[1]);
     }
     else if(!strcmp(tokens[0],"save"))
     {
