@@ -1,3 +1,7 @@
+#include <DS1307RTC.h>
+
+#include <Time.h>
+
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <bv4627.h>
@@ -12,20 +16,32 @@
 #define STATUS1 22
 #define STATUS2 23
 
-int buttonState[32]; // NUM_BUTTONS
-int buttonCount[32]; // NUM_BUTTONS
-unsigned int iteration;
-unsigned int lastChange[32]; // NUM_BUTTONS
+uint8_t buttonState[32]; // NUM_BUTTONS
+uint8_t buttonCount[32]; // NUM_BUTTONS
+unsigned long iteration;
+unsigned long lastChange[32]; // NUM_BUTTONS
 
 void setup()
 {
+    Wire.begin();
     Serial.begin(9600);
     Serial.println(F("Init begin"));
-    for(int i=0;i<32;i++)
+    setSyncProvider(RTC.get);   // the function to get the time from the RTC
+    if(timeStatus()!= timeSet) 
+    {
+        Serial.println("Unable to sync with the RTC");
+    }
+    else
+    {
+        Serial.println("RTC has set the system time");      
+        digitalClockDisplay();
+    }
+
+    for(uint8_t i=0;i<32;i++)
     {
         Device::restore(i);
     }
-    for(int i=0;i<ARRAY_SIZE(buttonState);i++)
+    for(uint8_t i=0;i<ARRAY_SIZE(buttonState);i++)
     {
         pinMode(buttons[i],INPUT);
         digitalWrite(buttons[i],HIGH); // Enable pull-up
@@ -36,6 +52,29 @@ void setup()
     Serial.println(F("Init done"));
 }
 
+void digitalClockDisplay(){
+    // digital clock display of the time
+    Serial.print(hour());
+    printDigits(minute());
+    printDigits(second());
+    Serial.print(" ");
+    Serial.print(day());
+    Serial.print(" ");
+    Serial.print(month());
+    Serial.print(" ");
+    Serial.print(year()); 
+    Serial.println(); 
+}
+
+void printDigits(int digits){
+    // utility function for digital clock display: prints preceding colon and leading 0
+    Serial.print(":");
+    if(digits < 10)
+        Serial.print('0');
+    Serial.print(digits);
+}
+
+
 char line[64];
 char lidx = 0;
 
@@ -43,7 +82,7 @@ void handleInput()
 {
     char *tokens[10];
     char *t;
-    int tidx = 0;
+    uint8_t tidx = 0;
     t=strtok(line," ");
 
     while(t != NULL)
@@ -64,7 +103,7 @@ void handleInput()
     }
     else if(!strcmp(tokens[0],"show"))
     {
-        for(int i=0;i<32;i++)
+        for(uint8_t i=0;i<32;i++)
         {
             Device *d = Device::getDeviceForId(i);
             if(d!=NULL)
@@ -73,9 +112,9 @@ void handleInput()
     }
     else if(!strcmp(tokens[0],"setname") && tidx > 1)
     {
-        int id = atoi(tokens[1]);
+        uint8_t id = atoi(tokens[1]);
         char name[16]="";
-        for(int i=2;i<tidx;i++)
+        for(uint8_t i=2;i<tidx;i++)
         {
             strncat(name,tokens[i],16);
             strncat(name," ",16);
@@ -86,7 +125,7 @@ void handleInput()
     }
     else if(!strcmp(tokens[0],"delete") && tidx ==2)
     {
-        int id = atoi(tokens[1]);
+        uint8_t id = atoi(tokens[1]);
         Device *d = Device::getDeviceForId(id);
         if(d != NULL)
             delete d;
@@ -95,25 +134,26 @@ void handleInput()
     {
         if(!strcmp(tokens[1],"dimmer"))
         {
-            if(tidx != 8)
+            if(tidx != 9)
             {
-                Serial.println(F("define dimmer <id> <board> <relay> <buttonPlus> <buttonMin> <pwm>"));
+                Serial.println(F("define dimmer <id> <nvSlot> <board> <relay> <buttonPlus> <buttonMin> <pwm>"));
             }
             else
             {
-                int id, board, relay, buttonPlus, buttonMin, pwm;
+                uint8_t id, nvslot, board, relay, buttonPlus, buttonMin, pwm;
                 id = atoi(tokens[2]);
-                board = atoi(tokens[3]);
-                relay = atoi(tokens[4]);
-                buttonPlus = atoi(tokens[5]);
-                buttonMin = atoi(tokens[6]);
-                pwm = atoi(tokens[7]);
+                nvslot = atoi(tokens[3]);
+                board = atoi(tokens[4]);
+                relay = atoi(tokens[5]);
+                buttonPlus = atoi(tokens[6]);
+                buttonMin = atoi(tokens[7]);
+                pwm = atoi(tokens[8]);
 
                 if(id < 0 || id >= NUM_DEVICES)
                     Serial.println(F("id out of range"));
                 else if(Device::getDeviceForId(id) != NULL)
                     Serial.println(F("id not empty"));
-                else if(relay < 0 || relay >= NUM_RELAYS)
+                else if(relay < 1 || relay > NUM_RELAYS)
                     Serial.println(F("relay out of range"));
                 else if(buttonPlus < 0 || buttonPlus >= NUM_BUTTONS)
                     Serial.println(F("buttonPlus out of range"));
@@ -125,30 +165,31 @@ void handleInput()
                     Serial.println(F("buttonMin already in use"));
                 else
                 {
-                    Device *d = new Dimmer(id, board, relay,buttonPlus,buttonMin,pwm);
+                    Device *d = new Dimmer(id, nvslot, board, relay,buttonPlus,buttonMin,pwm);
                     d->printInfo();
                 }
             }
         }
         else if(!strcmp(tokens[1],"lightpoint"))
         {
-            if(tidx != 6)
+            if(tidx != 7)
             {
-                Serial.println(F("define lightpoint <id> <board> <relay> <button>"));
+                Serial.println(F("define lightpoint <id> <nvSlot> <board> <relay> <button>"));
             }
             else
             {
-                int id, board, relay, button;
+                uint8_t id, nvslot, board, relay, button;
                 id = atoi(tokens[2]);
-                board = atoi(tokens[3]);
-                relay = atoi(tokens[4]);
-                button = atoi(tokens[5]);
+                nvslot = atoi(tokens[3]);
+                board = atoi(tokens[4]);
+                relay = atoi(tokens[5]);
+                button = atoi(tokens[6]);
 
                 if(id < 0 || id >= NUM_DEVICES)
                     Serial.println(F("id out of range"));
                 else if(Device::getDeviceForId(id) != NULL)
                     Serial.println(F("id not empty"));
-                else if(relay < 0 || relay >= NUM_RELAYS)
+                else if(relay < 1 || relay > NUM_RELAYS)
                     Serial.println(F("relay out of range"));
                 else if(button < 0 || button >= NUM_BUTTONS)
                     Serial.println(F("button out of range"));
@@ -156,7 +197,7 @@ void handleInput()
                     Serial.println(F("button already in use"));
                 else
                 {
-                    Device *d = new Lightpoint(id, board, relay,button);
+                    Device *d = new Lightpoint(id, nvslot, board, relay,button);
                     d->printInfo();
                 }
             }
@@ -169,7 +210,7 @@ void handleInput()
             }
             else
             {
-                int id, address;
+                uint8_t id, address;
                 id = atoi(tokens[2]);
                 address = atoi(tokens[3]);
 
@@ -194,7 +235,7 @@ void handleInput()
         if(tidx == 1)
         {
             // Save all
-            for(int i=0;i<32;i++)
+            for(uint8_t i=0;i<32;i++)
             {
                 Device *d = Device::getDeviceForId(i);
                 if(d != NULL)
@@ -209,7 +250,7 @@ void handleInput()
         }
         else
         {
-            int id = atoi(tokens[1]);
+            uint8_t id = atoi(tokens[1]);
             Device *d = Device::getDeviceForId(id);
             if(d != NULL)
                 d->saveSettings();
@@ -221,6 +262,10 @@ void handleInput()
         Serial.println(F("Resetting"));
         wdt_enable (WDTO_1S);  // reset after one second, if no "pat the dog" received
         while(1);
+    }
+    else if(!strcmp(tokens[0],"time"))
+    {
+        digitalClockDisplay();
     }
     else
     {
@@ -248,7 +293,7 @@ void serialEvent()
     }
 }
 
-int status = 0;
+bool status = 0;
 void loop()
 {
     if(iteration%50 == 0)
@@ -263,12 +308,11 @@ void loop()
     delay(10);
     iteration++;
 
-    int i;
-    for(i=0;i<NUM_BUTTONS;i++)
+    for(uint8_t i=0;i<NUM_BUTTONS;i++)
     {
-        int value = digitalRead(buttons[i]);
+        uint8_t value = digitalRead(buttons[i]);
 
-        int changed = 0;
+        bool changed = 0;
         if(buttonState[i] != value)
         {
             buttonCount[i]++;
@@ -292,7 +336,7 @@ void loop()
                 Device *d = Device::getDeviceForButton(i);
                 if(d != NULL)
                 {
-                    int previous = buttonState[i];
+                    uint8_t previous = buttonState[i];
                     if(changed)
                         previous = !buttonState[i];
 

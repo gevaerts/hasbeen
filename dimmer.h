@@ -1,29 +1,31 @@
 #ifndef DIMMER_H
 #define DIMMER_H
 
-#define DIMMER_STEPS 16
+#define DIMMER_STEPS 15
 
 #include "relay.h"
 
 class Dimmer: public Relay
 {
     public:
-        Dimmer(int id, int board, int relay,int buttonPlus,int buttonMin,int pwm);
-        Dimmer(int id, unsigned char *initData);
+        Dimmer(uint8_t id, uint8_t nvSlot, uint8_t board, uint8_t relay,uint8_t buttonPlus,uint8_t buttonMin,uint8_t pwm);
+        Dimmer(uint8_t id, unsigned char *initData);
         virtual ~Dimmer();
-        virtual void press(int button,int previousState);
-        virtual int respondsToButton(int button);
+        virtual void press(uint8_t button,uint8_t previousState);
+        virtual bool respondsToButton(uint8_t button);
         virtual void printInfo();
     protected:
-        virtual int saveConfig(unsigned char *initData);
+        virtual uint8_t saveConfig(unsigned char *initData);
+        virtual uint8_t restoreState();
+        virtual void saveState(uint8_t data);
     private:
         void init();
         void writeBrightness();
-        int _buttonPlus;
-        int _buttonMin;
-        int _pwm;
-        int _brightness;
-        int _min;
-        int _max;
+        uint8_t _buttonPlus;
+        uint8_t _buttonMin;
+        uint8_t _pwm;
+        uint8_t _brightness;
+        uint8_t _min;
+        uint8_t _max;
 };
 #endif

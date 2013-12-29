@@ -7,13 +7,14 @@ void Lightpoint::init()
     registerButton(_button, this);
 }
 
-Lightpoint::Lightpoint(int id, int board, int relay, int button):Relay(id, board, relay, ONOFFLIGHT)
+Lightpoint::Lightpoint(uint8_t id, uint8_t nvSlot, uint8_t board, uint8_t relay, uint8_t button):Relay(id, nvSlot, board, relay, ONOFFLIGHT)
 {
     _button = button;
     init();
+    saveState(0);
 }
 
-Lightpoint::Lightpoint(int id, unsigned char *initData): Relay(id,initData)
+Lightpoint::Lightpoint(uint8_t id, unsigned char *initData): Relay(id,initData)
 {
     Serial.println(F("Restoring lightpoint data"));
     _button = initData[_offset++];
@@ -26,10 +27,10 @@ Lightpoint::~Lightpoint()
     registerButton(_button, NULL);
 }
 
-int Lightpoint::saveConfig(unsigned char *initData)
+uint8_t Lightpoint::saveConfig(unsigned char *initData)
 {
     Serial.println(F("Saving lightpoint data"));
-    int offset = Relay::saveConfig(initData);
+    uint8_t offset = Relay::saveConfig(initData);
     initData[offset++]=_button;
     return offset;
 }
@@ -41,12 +42,12 @@ void Lightpoint::printInfo()
     Serial.println(_button);
 }
 
-int Lightpoint::respondsToButton(int button)
+bool Lightpoint::respondsToButton(uint8_t button)
 {
     return (button == _button);
 }
 
-void Lightpoint::press(int button, int previousState)
+void Lightpoint::press(uint8_t button, uint8_t previousState)
 {
     Serial.print(F("Simple "));
     Serial.print(_button,DEC);
@@ -58,4 +59,5 @@ void Lightpoint::press(int button, int previousState)
     {
         setOn(!relayState());
     }
+    saveState(0);
 }

@@ -6,20 +6,22 @@
 #include "relayboard.h"
 #include "lightpoint.h"
 #include "dimmer.h"
+#include "nvram.h"
 
 unsigned char Device::scratch[DEVICE_EEPROM_SIZE];
 Device *Device::_devicesByButton[32]; //TODO: NUM_BUTTONS
-Device *Device::_devicesById[32]; 
+Device *Device::_devicesById[32];
 
-Device::Device(int id, enum DeviceType type)
+Device::Device(uint8_t id, uint8_t nvSlot, enum DeviceType type)
 {
     _id = id;
+    _nvSlot = nvSlot;
     _type = type;
     _name[0]=0;
     _devicesById[id]=this;
 }
 
-Device::Device(int id, unsigned char *initData)
+Device::Device(uint8_t id, unsigned char *initData)
 {
     Serial.print(F("Restoring device data for device "));
     Serial.println(id);
@@ -27,6 +29,7 @@ Device::Device(int id, unsigned char *initData)
     _type = (enum DeviceType) initData[_offset++];
     _id = id;
     _offset++;
+    _nvSlot = initData[_offset++];
     memcpy(_name,initData+_offset,16);
     _offset += 16;
     _devicesById[id]=this;
@@ -37,20 +40,43 @@ Device::~Device()
 {
     Serial.println(F("Deleting device"));
     _type = UNDEFINED;
-    int baseAddress = _id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
+    uint16_t baseAddress = _id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
     scratch[0] = _type;
     EEPROM.write(baseAddress, scratch[0]);
     _devicesById[_id]=NULL;
 }
 
+uint8_t Device::restoreState()
+{
+    uint8_t data = 0;
+    Serial.print(F("reading device state for device "));
+    Serial.print(_id);
+    Serial.print(F(" ... 0x"));
+    if(_nvSlot != NO_NVSLOT)
+    {
+        NVRAM.getRAM(_nvSlot, &data, 1);
+    }
+    Serial.println(data,HEX);
+    return data;
+}
+void Device::saveState(uint8_t data)
+{
+    Serial.print(F("saving device state : 0x"));
+    Serial.println(data);
+    if(_nvSlot != NO_NVSLOT)
+    {
+        NVRAM.setRAM(_nvSlot, &data, 1);
+    }
+}
 
-int Device::saveConfig(unsigned char *initData)
+uint8_t Device::saveConfig(unsigned char *initData)
 {
     Serial.println(F("Saving device data"));
 
-    int offset = 0;
+    uint8_t offset = 0;
     initData[offset++] = _type;
     initData[offset++] = _id;
+    initData[offset++] = _nvSlot;
     memcpy(&initData[offset+=16],_name,16);
 
     return offset;
@@ -58,10 +84,14 @@ int Device::saveConfig(unsigned char *initData)
 
 void Device::saveSettings()
 {
-    saveConfig(scratch);
-    int baseAddress = _id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
+    uint8_t size = saveConfig(scratch);
+    if(size > DEVICE_EEPROM_SIZE)
+    {
+        Serial.println("Error! Save size too large");
+    }
+    uint16_t baseAddress = _id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
 
-    for(int i=0;i<DEVICE_EEPROM_SIZE;i++)
+    for(uint16_t i=0;i<DEVICE_EEPROM_SIZE;i++)
     {
         EEPROM.write(baseAddress + i, scratch[i]);
     }
@@ -75,6 +105,8 @@ void Device::printInfo()
     Serial.println(_name);
     Serial.print(F("\tdevice type "));
     Serial.println(_type);
+    Serial.print(F("\tNVRAM slot "));
+    Serial.println(_nvSlot);
 }
 
 void Device::setName(char *name)
@@ -83,18 +115,18 @@ void Device::setName(char *name)
     _name[15]=0;
 }
 
-void Device::restore(int id)
+void Device::restore(uint8_t id)
 {
     Serial.println(F("Loading device data"));
     Device *device = NULL;
-    int baseAddress = id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
+    uint16_t baseAddress = id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
     enum DeviceType type = (enum DeviceType) EEPROM.read(baseAddress);
 
     if(type == UNDEFINED)
         return;
 
     scratch[0] = type;
-    for(int i=1;i<DEVICE_EEPROM_SIZE;i++)
+    for(uint16_t i=1;i<DEVICE_EEPROM_SIZE;i++)
     {
         scratch[i]=EEPROM.read(baseAddress + i);
     }
@@ -117,19 +149,23 @@ void Device::restore(int id)
         default:
             break;
     }
+    if(device != NULL)
+    {
+        device->restoreState();
+    }
 }
 
-Device *Device::getDeviceForButton(int button)
+Device *Device::getDeviceForButton(uint8_t button)
 {
     return _devicesByButton[button];
 }
 
-void Device::registerButton(int button, Device *device)
+void Device::registerButton(uint8_t button, Device *device)
 {
     _devicesByButton[button] = device;
 }
 
-Device *Device::getDeviceForId(int id)
+Device *Device::getDeviceForId(uint8_t id)
 {
     return _devicesById[id];
 }

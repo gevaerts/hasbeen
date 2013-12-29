@@ -8,17 +8,17 @@
 class RelayBoard: public Device
 {
     public:
-        RelayBoard(int id, int address);
-        RelayBoard(int id, unsigned char *initdata);
+        RelayBoard(uint8_t id, uint8_t address);
+        RelayBoard(uint8_t id, unsigned char *initdata);
 
         virtual ~RelayBoard();
         virtual void printInfo();
-        void setOn(int relay, int state);
+        void setOn(uint8_t relay, uint8_t state);
     protected:
-        virtual int saveConfig(unsigned char *initData);
+        virtual uint8_t saveConfig(unsigned char *initData);
     private:
         void init();
-        int _address;
+        uint8_t _address;
         BV4627 *_board;
 };
 #endif

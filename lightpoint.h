@@ -6,16 +6,16 @@
 class Lightpoint: public Relay
 {
     public:
-        Lightpoint(int id, int board, int relay,int button);
-        Lightpoint(int id, unsigned char *initData);
+        Lightpoint(uint8_t id, uint8_t nvSlot, uint8_t board, uint8_t relay,uint8_t button);
+        Lightpoint(uint8_t id, unsigned char *initData);
         virtual ~Lightpoint();
-        virtual void press(int button,int previousState);
-        virtual int respondsToButton(int button);
+        virtual void press(uint8_t button,uint8_t previousState);
+        virtual bool respondsToButton(uint8_t button);
         virtual void printInfo();
     protected:
-        virtual int saveConfig(unsigned char *initData);
+        virtual uint8_t saveConfig(unsigned char *initData);
     private:
         void init();
-        int _button;
+        uint8_t _button;
 };
 #endif

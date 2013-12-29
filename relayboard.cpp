@@ -7,16 +7,15 @@
 void RelayBoard::init()
 {
     _board = new BV4627(_address);
-
 }
 
-RelayBoard::RelayBoard(int id, int address) : Device(id, RELAYBOARD)
+RelayBoard::RelayBoard(uint8_t id, uint8_t address) : Device(id, NO_NVSLOT, RELAYBOARD)
 {
     _address = address;
     init();
 }
 
-RelayBoard::RelayBoard(int id, unsigned char *initData): Device(id,initData)
+RelayBoard::RelayBoard(uint8_t id, unsigned char *initData): Device(id,initData)
 {
     Serial.println(F("Restoring relayboard data"));
     _address = initData[_offset++];
@@ -30,16 +29,16 @@ RelayBoard::~RelayBoard()
     delete _board;
 }
 
-int RelayBoard::saveConfig(unsigned char *initData)
+uint8_t RelayBoard::saveConfig(unsigned char *initData)
 {
     Serial.println(F("Saving relayboard data"));
 
-    int offset = Device::saveConfig(initData);
+    uint8_t offset = Device::saveConfig(initData);
     initData[offset++]=_address;
     return offset;
 }
 
-void RelayBoard::setOn(int relay,int state)
+void RelayBoard::setOn(uint8_t relay,uint8_t state)
 {
     _board->click(relay, state, 1);
 }
@@ -47,7 +46,7 @@ void RelayBoard::setOn(int relay,int state)
 void RelayBoard::printInfo()
 {
     Device::printInfo();
-    Serial.print(F("\taddress  "));
+    Serial.print(F("\taddress 0x"));
     Serial.println(_address,HEX);
 
     uint16_t k=1;

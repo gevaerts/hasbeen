@@ -19,32 +19,37 @@ enum DeviceType
     UNDEFINED = 255
 };
 
+#define NO_NVSLOT 0xff
+
 class Device
 {
     public:
         // id is used to derive things like eeprom and nvram addresses
-        Device(int id, enum DeviceType type);
-        Device(int id, unsigned char *initData);
+        Device(uint8_t id, uint8_t nvSlot, enum DeviceType type);
+        Device(uint8_t id, unsigned char *initData);
         virtual ~Device();
         void setName(char *name);
         void saveSettings();
         void restoreSettings();
         virtual void printInfo();
-        virtual void press(int button,int previousState) {};
-        static void restore(int id);
-        static Device *getDeviceForButton(int button);
-        static Device *getDeviceForId(int id);
+        virtual void press(uint8_t button,uint8_t previousState) {};
+        static void restore(uint8_t id);
+        static Device *getDeviceForButton(uint8_t button);
+        static Device *getDeviceForId(uint8_t id);
         enum DeviceType getType()
         {
             return _type;
         }
     protected:
-        virtual int saveConfig(unsigned char *initData);
-        static void registerButton(int button, Device *device);
-        int _offset;
+        virtual uint8_t saveConfig(unsigned char *initData);
+        virtual uint8_t restoreState();
+        virtual void saveState(uint8_t data);
+        static void registerButton(uint8_t button, Device *device);
+        uint8_t _offset;
     private:
         char _name[16];
-        int _id;
+        uint8_t _id;
+        uint8_t _nvSlot;
         enum DeviceType _type;
         static unsigned char scratch[DEVICE_EEPROM_SIZE];
         static Device *_devicesByButton[32]; //TODO: NUM_BUTTONS
