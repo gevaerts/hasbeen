@@ -27,13 +27,13 @@ void setup()
     Serial.begin(9600);
     Serial.println(F("Init begin"));
     setSyncProvider(RTC.get);   // the function to get the time from the RTC
-    if(timeStatus()!= timeSet) 
+    if(timeStatus()!= timeSet)
     {
         Serial.println("Unable to sync with the RTC");
     }
     else
     {
-        Serial.println("RTC has set the system time");      
+        Serial.println("RTC has set the system time");
         digitalClockDisplay();
     }
 
@@ -103,11 +103,20 @@ void handleInput()
     }
     else if(!strcmp(tokens[0],"show"))
     {
+        if(tidx == 2)
+        {
+            Device *d = Device::getDeviceForId(atoi(tokens[1]));
+            if(d!=NULL)
+                d->printInfo();
+        }
+        else
+        {
         for(uint8_t i=0;i<32;i++)
         {
             Device *d = Device::getDeviceForId(i);
             if(d!=NULL)
                 d->printInfo();
+        }
         }
     }
     else if(!strcmp(tokens[0],"setname") && tidx > 1)

@@ -30,7 +30,6 @@ class Device
         virtual ~Device();
         void setName(char *name);
         void saveSettings();
-        void restoreSettings();
         virtual void printInfo();
         virtual void press(uint8_t button,uint8_t previousState) {};
         static void restore(uint8_t id);
