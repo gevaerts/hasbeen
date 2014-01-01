@@ -23,8 +23,9 @@ unsigned long lastChange[32]; // NUM_BUTTONS
 
 void setup()
 {
+    wdt_disable();
     Wire.begin();
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.println(F("Init begin"));
     setSyncProvider(RTC.get);   // the function to get the time from the RTC
     if(timeStatus()!= timeSet)
@@ -62,8 +63,8 @@ void digitalClockDisplay(){
     Serial.print(" ");
     Serial.print(month());
     Serial.print(" ");
-    Serial.print(year()); 
-    Serial.println(); 
+    Serial.print(year());
+    Serial.println();
 }
 
 void printDigits(int digits){
@@ -101,6 +102,10 @@ void handleInput()
         // No command was given
         return;
     }
+    else if(!strcmp(tokens[0],"scan"))
+    {
+        i2cScan();
+    }
     else if(!strcmp(tokens[0],"show"))
     {
         if(tidx == 2)
@@ -111,15 +116,15 @@ void handleInput()
         }
         else
         {
-        for(uint8_t i=0;i<32;i++)
-        {
-            Device *d = Device::getDeviceForId(i);
-            if(d!=NULL)
-                d->printInfo();
-        }
+            for(uint8_t i=0;i<32;i++)
+            {
+                Device *d = Device::getDeviceForId(i);
+                if(d!=NULL)
+                    d->printInfo();
+            }
         }
     }
-    else if(!strcmp(tokens[0],"setname") && tidx > 1)
+    else if(!strcmp(tokens[0],"setname") && tidx > 2)
     {
         uint8_t id = atoi(tokens[1]);
         char name[16]="";
@@ -131,6 +136,16 @@ void handleInput()
         Device *d = Device::getDeviceForId(id);
         if(d != NULL)
             d->setName(name);
+    }
+    else if(!strcmp(tokens[0],"setaddress") && tidx == 3)
+    {
+        uint8_t id = atoi(tokens[1]);
+        uint8_t address = atoi(tokens[2]);
+        Device *d = Device::getDeviceForId(id);
+        if(d != NULL && d->getType() == RELAYBOARD)
+        {
+            ((RelayBoard *)d)->setAddress(address);
+        }
     }
     else if(!strcmp(tokens[0],"delete") && tidx ==2)
     {
@@ -266,12 +281,17 @@ void handleInput()
             // Save one
         }
     }
+    /*
     else if(!strcmp(tokens[0],"reset"))
     {
         Serial.println(F("Resetting"));
-        wdt_enable (WDTO_1S);  // reset after one second, if no "pat the dog" received
+        Serial.flush();
+
+        noInterrupts();
+        wdt_enable (WDTO_8S);
         while(1);
     }
+    */
     else if(!strcmp(tokens[0],"time"))
     {
         digitalClockDisplay();
@@ -300,6 +320,46 @@ void serialEvent()
             line[lidx++] = c;
         }
     }
+}
+
+void i2cScan()
+{
+    byte error, address;
+    int nDevices;
+
+    Serial.println("Scanning...");
+
+    nDevices = 0;
+    for(address = 1; address < 127; address++ )
+    {
+        // The i2c_scanner uses the return value of
+        // the Write.endTransmisstion to see if
+        // a device did acknowledge to the address.
+        Wire.beginTransmission(address);
+        error = Wire.endTransmission();
+
+        if (error == 0)
+        {
+            Serial.print("I2C device found at address 0x");
+            if (address<16)
+                Serial.print("0");
+            Serial.println(address,HEX);
+
+            nDevices++;
+        }
+        else if (error==4)
+        {
+            Serial.print("Unknow error at address 0x");
+            if (address<16)
+                Serial.print("0");
+            Serial.println(address,HEX);
+        }
+    }
+    if (nDevices == 0)
+        Serial.println("No I2C devices found\n");
+    else
+        Serial.println("done\n");
+
 }
 
 bool status = 0;

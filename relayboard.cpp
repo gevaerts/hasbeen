@@ -29,6 +29,19 @@ RelayBoard::~RelayBoard()
     delete _board;
 }
 
+void RelayBoard::setAddress(uint8_t address)
+{
+    Serial.print(F("Setting relayboard address to "));
+    Serial.print(address,DEC);
+    Serial.print(F(" (0x"));
+    Serial.print(address,HEX);
+    Serial.println(F(")"));
+
+    _board->setaddress(address<<1);
+    _address = address;
+}
+
+
 uint8_t RelayBoard::saveConfig(unsigned char *initData)
 {
     Serial.println(F("Saving relayboard data"));
