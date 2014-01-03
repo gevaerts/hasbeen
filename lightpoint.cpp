@@ -61,3 +61,11 @@ void Lightpoint::press(uint8_t button, uint8_t previousState)
     }
     saveState(0);
 }
+
+void Lightpoint::printDefinition()
+{
+    char buffer[40];
+    sprintf(buffer,"define lightpoint %d %d %d %d",getId(), getNVSlot(), getBoard(), getRelay(), _button);
+    Serial.println(buffer);
+};
+

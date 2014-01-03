@@ -16,12 +16,15 @@ class Relay: public Device
         virtual void on() {setOn(1);}
         virtual void off() {setOn(0);}
         virtual char *getTypeName() {return "Relay";};
+        virtual void printDefinition();
     protected:
         virtual uint8_t saveConfig(unsigned char *initData);
         virtual uint8_t restoreState();
         virtual void saveState(uint8_t data);
         void setOn(uint8_t state);
         uint8_t relayState();
+        uint8_t getRelay() {return _relay;}
+        uint8_t getBoard() {return _board;}
     private:
         uint8_t _relay;
         uint8_t _board;

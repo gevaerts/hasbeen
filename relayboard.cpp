@@ -74,3 +74,11 @@ void RelayBoard::printInfo()
     Serial.print("\tFirmware Version ");
     Serial.println(s);
 }
+
+void RelayBoard::printDefinition()
+{
+    char buffer[40];
+    sprintf(buffer,"define relayboard %d %d",getId(), _address);
+    Serial.println(buffer);
+};
+

@@ -30,6 +30,7 @@ class Device
         Device(uint8_t id, unsigned char *initData);
         virtual ~Device();
         void setName(char *name);
+        char *getName() {return _name;}
         void saveSettings();
         virtual void printInfo();
         virtual void press(uint8_t button,uint8_t previousState) {};
@@ -39,6 +40,7 @@ class Device
         virtual void on() {}
         virtual void off() {}
         virtual char *getTypeName() {return "Device";};
+        virtual void printDefinition();
         enum DeviceType getType()
         {
             return _type;
@@ -48,6 +50,8 @@ class Device
         virtual uint8_t restoreState();
         virtual void saveState(uint8_t data);
         static void registerButton(uint8_t button, Device *device);
+        uint8_t getId() {return _id;}
+        uint8_t getNVSlot() {return _nvSlot;}
         uint8_t _offset;
     private:
         char _name[16];

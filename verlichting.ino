@@ -108,6 +108,41 @@ void handleInput()
     {
         i2cScan();
     }
+    else if(!strcmp(tokens[0],"showdefines"))
+    {
+        if(tidx == 2)
+        {
+            uint8_t i = atoi(tokens[1]);
+            Device *d = Device::getDeviceForId(i);
+            if(d!=NULL)
+            {
+                d->printDefinition();
+                if(strlen(d->getName()) > 0)
+                {
+                    char buffer[40];
+                    sprintf(buffer,"setname %d %s",i,d->getName());
+                    Serial.println(buffer);
+                }
+            }
+        }
+        else
+        {
+            for(uint8_t i=0;i<32;i++)
+            {
+                Device *d = Device::getDeviceForId(i);
+                if(d!=NULL)
+                {
+                    d->printDefinition();
+                    if(strlen(d->getName()) > 0)
+                    {
+                        char buffer[40];
+                        sprintf(buffer,"setname %d %s",i,d->getName());
+                        Serial.println(buffer);
+                    }
+                }
+            }
+        }
+    }
     else if(!strcmp(tokens[0],"show"))
     {
         if(tidx == 2)
@@ -340,16 +375,16 @@ void handleInput()
         }
     }
     /*
-    else if(!strcmp(tokens[0],"reset"))
-    {
-        Serial.println(F("Resetting"));
-        Serial.flush();
+       else if(!strcmp(tokens[0],"reset"))
+       {
+       Serial.println(F("Resetting"));
+       Serial.flush();
 
-        noInterrupts();
-        wdt_enable (WDTO_8S);
-        while(1);
-    }
-    */
+       noInterrupts();
+       wdt_enable (WDTO_8S);
+       while(1);
+       }
+     */
     else if(!strcmp(tokens[0],"time"))
     {
         digitalClockDisplay();

@@ -135,3 +135,18 @@ void Group::press(uint8_t button, uint8_t previousState)
         off();
     }
 }
+
+void Group::printDefinition()
+{
+    char buffer[40];
+    sprintf(buffer,"define group %d %d",getId(), _button);
+    Serial.println(buffer);
+    for(int i=0;i<sizeof(_memberBitmap)*8;i++)
+    {
+        if(isMember(i))
+        {
+            sprintf(buffer,"group add %d %d",getId(), i);
+            Serial.println(buffer);
+        }
+    }
+};

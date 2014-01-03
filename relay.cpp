@@ -85,3 +85,11 @@ uint8_t Relay::relayState()
 {
     return _relayState;
 }
+
+void Relay::printDefinition()
+{
+    char buffer[40];
+    sprintf(buffer,"define relay");
+    Serial.println(buffer);
+};
+

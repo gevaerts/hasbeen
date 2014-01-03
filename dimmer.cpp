@@ -151,3 +151,10 @@ void Dimmer::press(uint8_t button,uint8_t previousState)
     writeBrightness();
     saveState(0);
 }
+
+void Dimmer::printDefinition()
+{
+    char buffer[40];
+    sprintf(buffer,"define dimmer %d %d %d %d %d %d %d",getId(), getNVSlot(), getBoard(), getRelay(), _buttonPlus, _buttonMin, _pwm);
+    Serial.println(buffer);
+};

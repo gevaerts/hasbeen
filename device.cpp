@@ -78,7 +78,8 @@ uint8_t Device::saveConfig(unsigned char *initData)
     initData[offset++] = _type;
     initData[offset++] = _id;
     initData[offset++] = _nvSlot;
-    memcpy(&initData[offset+=16],_name,16);
+    memcpy(&initData[offset],_name,16);
+    offset+=16;
 
     return offset;
 }
@@ -177,3 +178,9 @@ Device *Device::getDeviceForId(uint8_t id)
         return NULL;
 }
 
+void Device::printDefinition()
+{
+    char buffer[40];
+    sprintf(buffer,"define device");
+    Serial.println(buffer);
+};
