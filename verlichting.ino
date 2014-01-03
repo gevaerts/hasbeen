@@ -10,6 +10,7 @@
 #include "lightpoint.h"
 #include "dimmer.h"
 #include "relayboard.h"
+#include "group.h"
 #include "device.h"
 #include <avr/wdt.h>
 
@@ -27,7 +28,8 @@ void setup()
     Wire.begin();
     Serial.begin(115200);
     Serial.println(F("Init begin"));
-    setSyncProvider(RTC.get);   // the function to get the time from the RTC
+
+    setSyncProvider(RTC.get);
     if(timeStatus()!= timeSet)
     {
         Serial.println("Unable to sync with the RTC");
@@ -154,6 +156,35 @@ void handleInput()
         if(d != NULL)
             delete d;
     }
+    else if(!strcmp(tokens[0],"group"))
+    {
+        if (tidx == 4 && !strcmp(tokens[1],"add"))
+        {
+            uint8_t gid = atoi(tokens[2]);
+            uint8_t id = atoi(tokens[3]);
+            Device *d = Device::getDeviceForId(gid);
+            if(d != NULL && d->getType() == GROUP)
+            {
+                ((Group *)d)->addMember(id);
+                d->printInfo();
+            }
+        }
+        else if (tidx == 4 && !strcmp(tokens[1],"remove"))
+        {
+            uint8_t gid = atoi(tokens[2]);
+            uint8_t id = atoi(tokens[3]);
+            Device *d = Device::getDeviceForId(gid);
+            if(d != NULL && d->getType() == GROUP)
+            {
+                ((Group *)d)->removeMember(id);
+                d->printInfo();
+            }
+        }
+        else
+        {
+            Serial.println(F("group {add|remove} <groupId> <deviceId>"));
+        }
+    }
     else if(!strcmp(tokens[0],"define") && tidx > 1)
     {
         if(!strcmp(tokens[1],"dimmer"))
@@ -190,6 +221,33 @@ void handleInput()
                 else
                 {
                     Device *d = new Dimmer(id, nvslot, board, relay,buttonPlus,buttonMin,pwm);
+                    d->printInfo();
+                }
+            }
+        }
+        else if(!strcmp(tokens[1],"group"))
+        {
+            if(tidx != 4)
+            {
+                Serial.println(F("define group <id> <button>"));
+            }
+            else
+            {
+                uint8_t id, button;
+                id = atoi(tokens[2]);
+                button = atoi(tokens[3]);
+
+                if(id < 0 || id >= NUM_DEVICES)
+                    Serial.println(F("id out of range"));
+                else if(Device::getDeviceForId(id) != NULL)
+                    Serial.println(F("id not empty"));
+                else if(button < 0 || button >= NUM_BUTTONS)
+                    Serial.println(F("button out of range"));
+                else if(Device::getDeviceForButton(button) != NULL)
+                    Serial.println(F("button already in use"));
+                else
+                {
+                    Device *d = new Group(id, button);
                     d->printInfo();
                 }
             }
@@ -313,8 +371,11 @@ void serialEvent()
             if(lidx >= 63 || c == '\n')
             {
                 line[lidx] = 0;
-                lidx = 0;
+                Serial.print(F("Input line : '"));
+                Serial.print(line);
+                Serial.println(F("'"));
                 handleInput();
+                lidx = 0;
                 continue;
             }
             line[lidx++] = c;

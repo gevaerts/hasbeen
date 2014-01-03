@@ -13,6 +13,9 @@ class Relay: public Device
         virtual void press(uint8_t button,uint8_t previousState) {};
         virtual bool respondsToButton(uint8_t button) {};
         virtual void printInfo();
+        virtual void on() {setOn(1);}
+        virtual void off() {setOn(0);}
+        virtual char *getTypeName() {return "Relay";};
     protected:
         virtual uint8_t saveConfig(unsigned char *initData);
         virtual uint8_t restoreState();

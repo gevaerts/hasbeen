@@ -15,6 +15,7 @@ class RelayBoard: public Device
         virtual void printInfo();
         void setOn(uint8_t relay, uint8_t state);
         void setAddress(uint8_t address);
+        virtual char *getTypeName() {return "RelayBoard";};
     protected:
         virtual uint8_t saveConfig(unsigned char *initData);
     private:

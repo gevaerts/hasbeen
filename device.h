@@ -16,6 +16,7 @@ enum DeviceType
     RELAY,
     TIMEDRELAY,
     RELAYBOARD,
+    GROUP,
     UNDEFINED = 255
 };
 
@@ -35,6 +36,9 @@ class Device
         static void restore(uint8_t id);
         static Device *getDeviceForButton(uint8_t button);
         static Device *getDeviceForId(uint8_t id);
+        virtual void on() {}
+        virtual void off() {}
+        virtual char *getTypeName() {return "Device";};
         enum DeviceType getType()
         {
             return _type;

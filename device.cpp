@@ -6,6 +6,7 @@
 #include "relayboard.h"
 #include "lightpoint.h"
 #include "dimmer.h"
+#include "group.h"
 #include "nvram.h"
 
 unsigned char Device::scratch[DEVICE_EEPROM_SIZE];
@@ -104,7 +105,7 @@ void Device::printInfo()
     Serial.print(F("\tdevice name "));
     Serial.println(_name);
     Serial.print(F("\tdevice type "));
-    Serial.println(_type);
+    Serial.println(getTypeName());
     Serial.print(F("\tNVRAM slot "));
     Serial.println(_nvSlot);
 }
@@ -146,6 +147,9 @@ void Device::restore(uint8_t id)
         case RELAYBOARD:
             device = new RelayBoard(id,scratch);
             break;
+        case GROUP:
+            device = new Group(id,scratch);
+            break;
         default:
             break;
     }
@@ -167,6 +171,9 @@ void Device::registerButton(uint8_t button, Device *device)
 
 Device *Device::getDeviceForId(uint8_t id)
 {
-    return _devicesById[id];
+    if(id < NUM_DEVICES)
+        return _devicesById[id];
+    else
+        return NULL;
 }
 
