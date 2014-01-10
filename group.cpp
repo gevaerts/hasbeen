@@ -101,6 +101,7 @@ void Group::on()
                 d->on();
         }
     }
+    Device::on();
 }
 
 void Group::off()
@@ -114,6 +115,7 @@ void Group::off()
                 d->off();
         }
     }
+    Device::off();
 }
 
 bool Group::respondsToButton(uint8_t button)

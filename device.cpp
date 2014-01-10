@@ -183,4 +183,27 @@ void Device::printDefinition()
     char buffer[40];
     sprintf(buffer,"define device");
     Serial.println(buffer);
-};
+}
+
+void Device::on()
+{
+    notifyAll(true);
+}
+
+void Device::off()
+{
+    notifyAll(false);
+}
+
+void Device::notifyAll(bool on)
+{
+    for(uint8_t i=0;i<NUM_DEVICES;i++)
+    {
+        Device *d = Device::getDeviceForId(i);
+        if(d!=NULL)
+        {
+            d->notify(_id,on);
+        }
+    }
+}
+

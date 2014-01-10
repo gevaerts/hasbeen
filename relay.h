@@ -13,8 +13,8 @@ class Relay: public Device
         virtual void press(uint8_t button,uint8_t previousState) {};
         virtual bool respondsToButton(uint8_t button) {};
         virtual void printInfo();
-        virtual void on() {setOn(1);}
-        virtual void off() {setOn(0);}
+        virtual void on() {setOn(1); Device::on();}
+        virtual void off() {setOn(0); Device::off();}
         virtual char *getTypeName() {return "Relay";};
         virtual void printDefinition();
     protected:

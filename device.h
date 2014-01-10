@@ -37,8 +37,8 @@ class Device
         static void restore(uint8_t id);
         static Device *getDeviceForButton(uint8_t button);
         static Device *getDeviceForId(uint8_t id);
-        virtual void on() {}
-        virtual void off() {}
+        virtual void on();
+        virtual void off();
         virtual char *getTypeName() {return "Device";};
         virtual void printDefinition();
         enum DeviceType getType()
@@ -49,6 +49,7 @@ class Device
         virtual uint8_t saveConfig(unsigned char *initData);
         virtual uint8_t restoreState();
         virtual void saveState(uint8_t data);
+        virtual void notify(uint8_t device, bool on) {};
         static void registerButton(uint8_t button, Device *device);
         uint8_t getId() {return _id;}
         uint8_t getNVSlot() {return _nvSlot;}
@@ -61,5 +62,6 @@ class Device
         static unsigned char scratch[DEVICE_EEPROM_SIZE];
         static Device *_devicesByButton[32]; //TODO: NUM_BUTTONS
         static Device *_devicesById[NUM_DEVICES]; 
+        void notifyAll(bool on);
 };
 #endif
