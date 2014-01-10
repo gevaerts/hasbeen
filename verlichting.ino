@@ -17,10 +17,10 @@
 #define STATUS1 22
 #define STATUS2 23
 
-uint8_t buttonState[32]; // NUM_BUTTONS
-uint8_t buttonCount[32]; // NUM_BUTTONS
+uint8_t buttonState[NUM_BUTTONS]; // NUM_BUTTONS
+uint8_t buttonCount[NUM_BUTTONS]; // NUM_BUTTONS
 unsigned long iteration;
-unsigned long lastChange[32]; // NUM_BUTTONS
+unsigned long lastChange[NUM_BUTTONS]; // NUM_BUTTONS
 
 void setup()
 {
@@ -40,7 +40,7 @@ void setup()
         digitalClockDisplay();
     }
 
-    for(uint8_t i=0;i<32;i++)
+    for(uint8_t i=0;i<NUM_DEVICES;i++)
     {
         Device::restore(i);
     }
@@ -127,7 +127,7 @@ void handleInput()
         }
         else
         {
-            for(uint8_t i=0;i<32;i++)
+            for(uint8_t i=0;i<NUM_DEVICES;i++)
             {
                 Device *d = Device::getDeviceForId(i);
                 if(d!=NULL)
@@ -153,7 +153,7 @@ void handleInput()
         }
         else
         {
-            for(uint8_t i=0;i<32;i++)
+            for(uint8_t i=0;i<NUM_DEVICES;i++)
             {
                 Device *d = Device::getDeviceForId(i);
                 if(d!=NULL)
@@ -243,7 +243,7 @@ void handleInput()
                     Serial.println(F("id out of range"));
                 else if(Device::getDeviceForId(id) != NULL)
                     Serial.println(F("id not empty"));
-                else if(relay < 1 || relay > NUM_RELAYS)
+                else if(relay < 1 || relay > 8)
                     Serial.println(F("relay out of range"));
                 else if(buttonPlus < 0 || buttonPlus >= NUM_BUTTONS)
                     Serial.println(F("buttonPlus out of range"));
@@ -306,7 +306,7 @@ void handleInput()
                     Serial.println(F("id out of range"));
                 else if(Device::getDeviceForId(id) != NULL)
                     Serial.println(F("id not empty"));
-                else if(relay < 1 || relay > NUM_RELAYS)
+                else if(relay < 1 || relay > 8)
                     Serial.println(F("relay out of range"));
                 else if(button < 0 || button >= NUM_BUTTONS)
                     Serial.println(F("button out of range"));
@@ -352,7 +352,7 @@ void handleInput()
         if(tidx == 1)
         {
             // Save all
-            for(uint8_t i=0;i<32;i++)
+            for(uint8_t i=0;i<NUM_DEVICES;i++)
             {
                 Device *d = Device::getDeviceForId(i);
                 if(d != NULL)

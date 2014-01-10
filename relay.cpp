@@ -78,7 +78,6 @@ void Relay::setOn(uint8_t state)
     {
         ((RelayBoard *)rb)->setOn(_relay, state);
     }
-    digitalWrite(relays[_relay],_relayState);
 }
 
 uint8_t Relay::relayState()

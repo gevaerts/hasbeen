@@ -10,8 +10,8 @@
 #include "nvram.h"
 
 unsigned char Device::scratch[DEVICE_EEPROM_SIZE];
-Device *Device::_devicesByButton[32]; //TODO: NUM_BUTTONS
-Device *Device::_devicesById[32];
+Device *Device::_devicesByButton[NUM_BUTTONS];
+Device *Device::_devicesById[NUM_DEVICES];
 
 Device::Device(uint8_t id, uint8_t nvSlot, enum DeviceType type)
 {

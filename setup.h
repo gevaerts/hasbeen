@@ -3,13 +3,11 @@
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
-extern const uint8_t buttons[];
-extern const uint8_t relays[];
-extern const uint8_t pwms[];
+#define NUM_PWMS 8
+#define NUM_BUTTONS 32
 
-extern const uint8_t NUM_BUTTONS;
-extern const uint8_t NUM_RELAYS;
-extern const uint8_t NUM_PWMS;
+extern const uint8_t buttons[NUM_BUTTONS];
+extern const uint8_t pwms[NUM_PWMS];
 
 #define PRESSED 0
 #define RELEASED 1

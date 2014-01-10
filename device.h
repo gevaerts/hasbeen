@@ -60,7 +60,7 @@ class Device
         uint8_t _nvSlot;
         enum DeviceType _type;
         static unsigned char scratch[DEVICE_EEPROM_SIZE];
-        static Device *_devicesByButton[32]; //TODO: NUM_BUTTONS
+        static Device *_devicesByButton[NUM_BUTTONS];
         static Device *_devicesById[NUM_DEVICES]; 
         void notifyAll(bool on);
 };
