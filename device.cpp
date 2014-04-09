@@ -89,7 +89,7 @@ void Device::saveSettings()
     uint8_t size = saveConfig(scratch);
     if(size > DEVICE_EEPROM_SIZE)
     {
-        Serial.println("Error! Save size too large");
+        Serial.println(F("Error! Save size too large"));
     }
     uint16_t baseAddress = _id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
 
@@ -178,11 +178,14 @@ Device *Device::getDeviceForId(uint8_t id)
         return NULL;
 }
 
-void Device::printDefinition()
+void Device::printDefinition(uint8_t first)
 {
-    char buffer[40];
-    sprintf(buffer,"define device");
-    Serial.println(buffer);
+    if(strlen(_name) > 0)
+    {
+        char buffer[40];
+        sprintf(buffer,"setname %d %s",_id,_name);
+        Serial.println(buffer);
+    }
 }
 
 void Device::on()
@@ -207,3 +210,7 @@ void Device::notifyAll(bool on)
     }
 }
 
+bool Device::isType(enum DeviceType type)
+{
+    return false;
+}

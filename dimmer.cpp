@@ -136,7 +136,7 @@ void Dimmer::press(uint8_t button,uint8_t previousState)
             _brightness = constrain(_brightness - 1, 0, DIMMER_STEPS);
     }
     Serial.print(F("Dimmer brightness "));
-        Serial.println(_brightness,DEC);
+    Serial.println(_brightness,DEC);
     if(_brightness == 0)
         switchOff = 1;
 
@@ -152,9 +152,20 @@ void Dimmer::press(uint8_t button,uint8_t previousState)
     saveState(0);
 }
 
-void Dimmer::printDefinition()
+void Dimmer::printDefinition(uint8_t first)
 {
-    char buffer[40];
-    sprintf(buffer,"define dimmer %d %d %d %d %d %d %d",getId(), getNVSlot(), getBoard(), getRelay(), _buttonPlus, _buttonMin, _pwm);
-    Serial.println(buffer);
+    {
+        char buffer[40];
+        sprintf(buffer,"define dimmer %d %d %d %d %d %d %d",getId(), getNVSlot(), getBoard(), getRelay(), _buttonPlus, _buttonMin, _pwm);
+        Serial.println(buffer);
+    }
+    Relay::printDefinition(0);
 };
+
+bool Dimmer::isType(enum DeviceType type)
+{
+    if(type == DIMMEDLIGHT)
+        return true;
+    else
+        return Relay::isType(type);
+}

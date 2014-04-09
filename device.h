@@ -4,7 +4,7 @@
 #define DEVICE_EEPROM_SIZE 32
 #define DEVICE_EEPROM_BASE 128
 #define DEVICE_EEPROM_INDEX 0
-#define NUM_DEVICES 32
+#define NUM_DEVICES 64
 
 
 #include "setup.h"
@@ -40,11 +40,12 @@ class Device
         virtual void on();
         virtual void off();
         virtual char *getTypeName() {return "Device";};
-        virtual void printDefinition();
+        virtual void printDefinition(uint8_t first);
         enum DeviceType getType()
         {
             return _type;
         }
+        virtual bool isType(enum DeviceType type);
     protected:
         virtual uint8_t saveConfig(unsigned char *initData);
         virtual uint8_t restoreState();

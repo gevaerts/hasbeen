@@ -138,17 +138,28 @@ void Group::press(uint8_t button, uint8_t previousState)
     }
 }
 
-void Group::printDefinition()
+void Group::printDefinition(uint8_t first)
 {
-    char buffer[40];
-    sprintf(buffer,"define group %d %d",getId(), _button);
-    Serial.println(buffer);
-    for(int i=0;i<sizeof(_memberBitmap)*8;i++)
     {
-        if(isMember(i))
+        char buffer[40];
+        sprintf(buffer,"define group %d %d",getId(), _button);
+        Serial.println(buffer);
+        for(int i=0;i<sizeof(_memberBitmap)*8;i++)
         {
-            sprintf(buffer,"group add %d %d",getId(), i);
-            Serial.println(buffer);
+            if(isMember(i))
+            {
+                sprintf(buffer,"group add %d %d",getId(), i);
+                Serial.println(buffer);
+            }
         }
     }
+    Device::printDefinition(0);
 };
+
+bool Group::isType(enum DeviceType type)
+{
+    if(type == GROUP)
+        return true;
+    else
+        return Device::isType(type);
+}

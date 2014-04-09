@@ -62,10 +62,20 @@ void Lightpoint::press(uint8_t button, uint8_t previousState)
     saveState(0);
 }
 
-void Lightpoint::printDefinition()
+void Lightpoint::printDefinition(uint8_t first)
 {
-    char buffer[40];
-    sprintf(buffer,"define lightpoint %d %d %d %d",getId(), getNVSlot(), getBoard(), getRelay(), _button);
-    Serial.println(buffer);
+    {
+        char buffer[40];
+        sprintf(buffer,"define lightpoint %d %d %d %d %d",getId(), getNVSlot(), getBoard(), getRelay(), _button);
+        Serial.println(buffer);
+    }
+    Device::printDefinition(0);
 };
 
+bool Lightpoint::isType(enum DeviceType type)
+{
+    if(type == ONOFFLIGHT)
+        return true;
+    else
+        return Relay::isType(type);
+}

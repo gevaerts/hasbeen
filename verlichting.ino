@@ -22,6 +22,13 @@ uint8_t buttonCount[NUM_BUTTONS]; // NUM_BUTTONS
 unsigned long iteration;
 unsigned long lastChange[NUM_BUTTONS]; // NUM_BUTTONS
 
+int freeRam ()
+{
+    extern int __heap_start, *__brkval;
+    int v;
+    return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
+}
+
 void setup()
 {
     wdt_disable();
@@ -32,11 +39,11 @@ void setup()
     setSyncProvider(RTC.get);
     if(timeStatus()!= timeSet)
     {
-        Serial.println("Unable to sync with the RTC");
+        Serial.println(F("Unable to sync with the RTC"));
     }
     else
     {
-        Serial.println("RTC has set the system time");
+        Serial.println(F("RTC has set the system time"));
         digitalClockDisplay();
     }
 
@@ -53,6 +60,8 @@ void setup()
     }
 
     Serial.println(F("Init done"));
+    Serial.print(F("Free memory: "));
+    Serial.println(freeRam());
 }
 
 void digitalClockDisplay(){
@@ -104,9 +113,21 @@ void handleInput()
         // No command was given
         return;
     }
+    else if(!strcmp(tokens[0],"#"))
+    {
+        // comment
+    }
     else if(!strcmp(tokens[0],"scan"))
     {
         i2cScan();
+    }
+    else if(!strcmp(tokens[0],"cleareeprom") && tidx == 1)
+    {
+        for(uint8_t i = 0; i < NUM_DEVICES; i++)
+        {
+            uint16_t baseAddress = i * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
+            EEPROM.write(baseAddress, -1);
+        }
     }
     else if(!strcmp(tokens[0],"showdefines"))
     {
@@ -116,13 +137,7 @@ void handleInput()
             Device *d = Device::getDeviceForId(i);
             if(d!=NULL)
             {
-                d->printDefinition();
-                if(strlen(d->getName()) > 0)
-                {
-                    char buffer[40];
-                    sprintf(buffer,"setname %d %s",i,d->getName());
-                    Serial.println(buffer);
-                }
+                d->printDefinition(1);
             }
         }
         else
@@ -132,16 +147,11 @@ void handleInput()
                 Device *d = Device::getDeviceForId(i);
                 if(d!=NULL)
                 {
-                    d->printDefinition();
-                    if(strlen(d->getName()) > 0)
-                    {
-                        char buffer[40];
-                        sprintf(buffer,"setname %d %s",i,d->getName());
-                        Serial.println(buffer);
-                    }
+                    d->printDefinition(1);
                 }
             }
         }
+        Serial.println(F("save"));
     }
     else if(!strcmp(tokens[0],"show"))
     {
@@ -174,6 +184,16 @@ void handleInput()
         if(d != NULL)
             d->setName(name);
     }
+    else if(!strcmp(tokens[0],"setinvert") && tidx == 3)
+    {
+        uint8_t id = atoi(tokens[1]);
+        uint8_t invert = atoi(tokens[2]);
+        Device *d = Device::getDeviceForId(id);
+        if(d != NULL && d->isType(RELAY))
+        {
+            ((Relay *)d)->setInvert(invert);
+        }
+    }
     else if(!strcmp(tokens[0],"setaddress") && tidx == 3)
     {
         uint8_t id = atoi(tokens[1]);
@@ -184,7 +204,7 @@ void handleInput()
             ((RelayBoard *)d)->setAddress(address);
         }
     }
-    else if(!strcmp(tokens[0],"delete") && tidx ==2)
+    else if(!strcmp(tokens[0],"delete") && tidx == 2)
     {
         uint8_t id = atoi(tokens[1]);
         Device *d = Device::getDeviceForId(id);
@@ -423,7 +443,7 @@ void i2cScan()
     byte error, address;
     int nDevices;
 
-    Serial.println("Scanning...");
+    Serial.println(F("Scanning..."));
 
     nDevices = 0;
     for(address = 1; address < 127; address++ )
@@ -436,7 +456,7 @@ void i2cScan()
 
         if (error == 0)
         {
-            Serial.print("I2C device found at address 0x");
+            Serial.print(F("I2C device found at address 0x"));
             if (address<16)
                 Serial.print("0");
             Serial.println(address,HEX);
@@ -445,16 +465,16 @@ void i2cScan()
         }
         else if (error==4)
         {
-            Serial.print("Unknow error at address 0x");
+            Serial.print(F("Unknow error at address 0x"));
             if (address<16)
                 Serial.print("0");
             Serial.println(address,HEX);
         }
     }
     if (nDevices == 0)
-        Serial.println("No I2C devices found\n");
+        Serial.println(F("No I2C devices found\n"));
     else
-        Serial.println("done\n");
+        Serial.println(F("done\n"));
 
 }
 

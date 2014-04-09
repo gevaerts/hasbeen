@@ -63,22 +63,32 @@ void RelayBoard::printInfo()
     Serial.println(_address,HEX);
 
     uint16_t k=1;
-    char s[10]; 
+    char s[10];
     // device id
     Serial.println();
-    Serial.print("\tDevice ID ");
+    Serial.print(F("\tDevice ID "));
     Serial.println(_board->deviceid());
     // firmware version
     *s=0;
     _board->version(s);
-    Serial.print("\tFirmware Version ");
+    Serial.print(F("\tFirmware Version "));
     Serial.println(s);
 }
 
-void RelayBoard::printDefinition()
+void RelayBoard::printDefinition(uint8_t first)
 {
-    char buffer[40];
-    sprintf(buffer,"define relayboard %d %d",getId(), _address);
-    Serial.println(buffer);
+    {
+        char buffer[40];
+        sprintf(buffer,"define relayboard %d %d",getId(), _address);
+        Serial.println(buffer);
+    }
+    Device::printDefinition(0);
 };
 
+bool RelayBoard::isType(enum DeviceType type)
+{
+    if(type == RELAYBOARD)
+        return true;
+    else
+        return Device::isType(type);
+}

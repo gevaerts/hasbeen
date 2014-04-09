@@ -16,7 +16,9 @@ class Relay: public Device
         virtual void on() {setOn(1); Device::on();}
         virtual void off() {setOn(0); Device::off();}
         virtual char *getTypeName() {return "Relay";};
-        virtual void printDefinition();
+        virtual void printDefinition(uint8_t first);
+        virtual bool isType(enum DeviceType type);
+        virtual void setInvert(uint8_t invert) {_invert = invert;};
     protected:
         virtual uint8_t saveConfig(unsigned char *initData);
         virtual uint8_t restoreState();
@@ -29,5 +31,6 @@ class Relay: public Device
         uint8_t _relay;
         uint8_t _board;
         uint8_t _relayState;
+        uint8_t _invert;
 };
 #endif

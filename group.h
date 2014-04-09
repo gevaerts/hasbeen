@@ -18,7 +18,8 @@ class Group: public Device
         virtual void press(uint8_t button,uint8_t previousState);
         virtual bool respondsToButton(uint8_t button);
         virtual char *getTypeName() {return "Group";};
-        virtual void printDefinition();
+        virtual void printDefinition(uint8_t first);
+        virtual bool isType(enum DeviceType type);
     protected:
         virtual uint8_t saveConfig(unsigned char *initData);
     private:

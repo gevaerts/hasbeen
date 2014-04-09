@@ -41,6 +41,7 @@ Relay::Relay(uint8_t id, unsigned char *initData): Device(id,initData)
     Serial.println(F("Restoring relay data"));
     _board = initData[_offset++];
     _relay = initData[_offset++];
+    _invert = initData[_offset++];
     // _relayState will be restored in restoreState(), so nothing to do here
 }
 
@@ -56,6 +57,7 @@ uint8_t Relay::saveConfig(unsigned char *initData)
     uint8_t offset = Device::saveConfig(initData);
     initData[offset++]=_board;
     initData[offset++]=_relay;
+    initData[offset++]=_invert;
     return offset;
 }
 
@@ -66,6 +68,8 @@ void Relay::printInfo()
     Serial.println(_board);
     Serial.print(F("\trelay # "));
     Serial.println(_relay);
+    Serial.print(F("\tinvert? "));
+    Serial.println(_invert);
     Serial.print(F("\tcurrent relay state "));
     Serial.println(_relayState);
 }
@@ -76,6 +80,7 @@ void Relay::setOn(uint8_t state)
     Device *rb = Device::getDeviceForId(_board);
     if(rb != NULL && rb->getType()==RELAYBOARD)
     {
+        if(_invert) state = !state;
         ((RelayBoard *)rb)->setOn(_relay, state);
     }
 }
@@ -85,10 +90,20 @@ uint8_t Relay::relayState()
     return _relayState;
 }
 
-void Relay::printDefinition()
+void Relay::printDefinition(uint8_t first)
 {
-    char buffer[40];
-    sprintf(buffer,"define relay");
-    Serial.println(buffer);
+    {
+        char buffer[40];
+        sprintf(buffer,"setinvert %d %d",getId(), _invert);
+        Serial.println(buffer);
+    }
+    Device::printDefinition(0);
 };
 
+bool Relay::isType(enum DeviceType type)
+{
+    if(type == RELAY)
+        return true;
+    else
+        return Device::isType(type);
+}

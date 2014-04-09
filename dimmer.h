@@ -15,7 +15,8 @@ class Dimmer: public Relay
         virtual bool respondsToButton(uint8_t button);
         virtual void printInfo();
         virtual char *getTypeName() {return "Dimmer";};
-        virtual void printDefinition();
+        virtual void printDefinition(uint8_t first);
+        virtual bool isType(enum DeviceType type);
     protected:
         virtual uint8_t saveConfig(unsigned char *initData);
         virtual uint8_t restoreState();
