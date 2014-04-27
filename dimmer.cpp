@@ -100,7 +100,8 @@ void Dimmer::writeBrightness()
     // TODO calibration
     // TODO non-linear scaling?
     uint8_t absoluteBrightness = _min + (_brightness * (_max - _min) / DIMMER_STEPS);
-    analogWrite(pwms[_pwm],~absoluteBrightness);
+    if(_pwm >= 0 && _pwm < NUM_PWMS)
+        analogWrite(pwms[_pwm],~absoluteBrightness);
 }
 
 bool Dimmer::respondsToButton(uint8_t button)
