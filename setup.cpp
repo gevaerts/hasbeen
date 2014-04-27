@@ -11,6 +11,6 @@ const uint8_t buttons[NUM_BUTTONS]=
 
 const uint8_t pwms[NUM_PWMS]=
 {
-    6,7,8,9,10,11,12,13
+    13,12,11,10,9,8,7,6
 };
 
