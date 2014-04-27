@@ -29,6 +29,7 @@ Relay::Relay(uint8_t id, uint8_t nvSlot, uint8_t board, uint8_t relay, enum Devi
     _board = board;
     _relay = relay;
     _relayState = 0;
+    _invert = 0;
     setOn(_relayState);
 }
 
