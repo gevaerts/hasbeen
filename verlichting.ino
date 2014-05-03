@@ -179,6 +179,40 @@ void handleInput()
             Serial.println(F("off <deviceId>"));
         }
     }
+    else if(!strcmp(tokens[0],"devices"))
+    {
+        for(uint8_t i=0;i<NUM_DEVICES;i++)
+        {
+            Device *d = Device::getDeviceForId(i);
+            if(d!=NULL)
+            {
+                Serial.print(i);
+                Serial.print(F(" : "));
+                Serial.println(d->getName());
+            }
+        }
+    }
+    else if(!strcmp(tokens[0],"buttons"))
+    {
+        for(uint8_t i=0;i<NUM_BUTTONS;i++)
+        {
+            Serial.print(i);
+            Serial.print(F(" : "));
+            Serial.print(buttonState[i]);
+            Device *d = Device::getDeviceForButton(i);
+            if(d!=NULL)
+            {
+                Serial.print(F(" : "));
+                Serial.print(d->getId());
+                Serial.print(F(" : "));
+                Serial.println(d->getName());
+            }
+            else
+            {
+                Serial.println(F(" : <>"));
+            }
+        }
+    }
     else if(!strcmp(tokens[0],"show"))
     {
         if(tidx == 2)
