@@ -6,10 +6,8 @@
 
 void Relay::saveState(uint8_t data)
 {
-    Serial.print(F("Saving relay state : 0x"));
     data<<=1;
     data |= (_relayState & 0x01);
-    Serial.println(data, HEX);
     Device::saveState(data);
 }
 
@@ -78,10 +76,7 @@ void Relay::setOn(uint8_t state)
         if(_invert) state = !state;
         ((RelayBoard *)rb)->setOn(_relay, state);
     }
-    if(state)
-        this->on();
-    else
-        this->off();
+    notifyAll(_relayState);
 }
 
 uint8_t Relay::relayState()

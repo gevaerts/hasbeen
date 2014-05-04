@@ -130,7 +130,7 @@ void handleInput()
         Serial.print(F("Average loop duration "));
         Serial.println(millis()/iteration);
         Serial.print(F("Longest loop duration "));
-        Serial.println(longest/iteration);
+        Serial.println(longest);
     }
     else if(!strcmp(tokens[0],"scan"))
     {
@@ -417,7 +417,7 @@ void handleInput()
         }
         else if(!strcmp(tokens[1],"follower"))
         {
-            if(tidx != 9)
+            if(tidx != 8)
             {
                 Serial.println(F("define follower <id> <board> <relay> <master> <delayOn> <delayOff"));
             }
@@ -426,11 +426,11 @@ void handleInput()
                 uint8_t id, board, relay, master;
                 uint16_t delayOn, delayOff;
                 id = atoi(tokens[2]);
-                board = atoi(tokens[4]);
-                relay = atoi(tokens[5]);
-                master = atoi(tokens[6]);
-                delayOn = atoi(tokens[7]);
-                delayOff = atoi(tokens[8]);
+                board = atoi(tokens[3]);
+                relay = atoi(tokens[4]);
+                master = atoi(tokens[5]);
+                delayOn = atoi(tokens[6]);
+                delayOff = atoi(tokens[7]);
 
                 if(id < 0 || id >= NUM_DEVICES)
                     Serial.println(F("id out of range"));

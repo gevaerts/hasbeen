@@ -59,6 +59,7 @@ class Device
         static void unregisterButtons(Device *device);
         uint8_t getNVSlot() {return _nvSlot;}
         uint8_t _offset;
+        void notifyAll(bool on);
     private:
         char _name[16];
         uint8_t _id;
@@ -67,6 +68,5 @@ class Device
         static unsigned char scratch[DEVICE_EEPROM_SIZE];
         static Device *_devicesByButton[NUM_BUTTONS];
         static Device *_devicesById[NUM_DEVICES];
-        void notifyAll(bool on);
 };
 #endif

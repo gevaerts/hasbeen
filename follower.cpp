@@ -70,14 +70,14 @@ void Follower::notify(uint8_t device, bool on)
         {
             _onRequest = millis();
             _waitingForOn = 1;
+            _waitingForOff = 0;
         }
         else
         {
             _offRequest = millis();
             _waitingForOff = 1;
+            _waitingForOn = 0;
         }
-
-        setOn(on);
     }
 }
 

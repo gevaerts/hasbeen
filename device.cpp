@@ -7,6 +7,8 @@
 #include "lightpoint.h"
 #include "dimmer.h"
 #include "group.h"
+#include "pulser.h"
+#include "follower.h"
 #include "nvram.h"
 
 unsigned char Device::scratch[DEVICE_EEPROM_SIZE];
@@ -24,7 +26,6 @@ Device::Device(uint8_t id, uint8_t nvSlot, enum DeviceType type)
 
 Device::Device(uint8_t id, unsigned char *initData)
 {
-    Serial.println(id);
     _offset = 0;
     _type = (enum DeviceType) initData[_offset++];
     _id = id;
@@ -58,7 +59,6 @@ uint8_t Device::restoreState()
 }
 void Device::saveState(uint8_t data)
 {
-    Serial.println(data);
     if(_nvSlot != NO_NVSLOT)
     {
         NVRAM.setRAM(_nvSlot, &data, 1);
@@ -149,6 +149,12 @@ void Device::restore(uint8_t id)
             break;
         case GROUP:
             device = new Group(id,scratch);
+            break;
+        case PULSER:
+            device = new Pulser(id,scratch);
+            break;
+        case FOLLOWER:
+            device = new Follower(id,scratch);
             break;
         default:
             break;
