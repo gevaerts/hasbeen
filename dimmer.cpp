@@ -38,8 +38,8 @@ Dimmer::Dimmer(uint8_t id, unsigned char *initData) : Relay(id, initData)
 Dimmer::~Dimmer()
 {
     Serial.println(F("Deleting dimmer"));
-    registerButton(_buttonPlus, NULL);
-    registerButton(_buttonMin, NULL);
+    unregisterButton(_buttonPlus, this);
+    unregisterButton(_buttonMin, this);
 }
 
 

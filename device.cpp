@@ -170,6 +170,12 @@ void Device::registerButton(uint8_t button, Device *device)
     _devicesByButton[button] = device;
 }
 
+void Device::unregisterButton(uint8_t button, Device *device)
+{
+    if(_devicesByButton[button] == device)
+        _devicesByButton[button] = NULL;
+}
+
 Device *Device::getDeviceForId(uint8_t id)
 {
     if(id < NUM_DEVICES)
