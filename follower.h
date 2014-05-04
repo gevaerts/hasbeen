@@ -22,8 +22,8 @@ class Follower: public Relay
         uint8_t _master;
         uint16_t _delayOn;
         uint16_t _delayOff;
-        long _onRequest;
-        long _offRequest;
+        unsigned long _onRequest;
+        unsigned long _offRequest;
         uint8_t _waitingForOn;
         uint8_t _waitingForOff;
 };

@@ -593,7 +593,7 @@ void i2cScan()
 }
 
 bool status = 0;
-long last = 0;
+unsigned long last = 0;
 void loop()
 {
     if(iteration%50 == 0)

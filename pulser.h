@@ -22,6 +22,6 @@ class Pulser: public Relay
         uint8_t _button;
         uint16_t _time;
         uint8_t _waitingForOff;
-        long _pressTime;
+        unsigned long _pressTime;
 };
 #endif
