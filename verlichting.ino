@@ -24,6 +24,8 @@ uint8_t buttonCount[NUM_BUTTONS]; // NUM_BUTTONS
 unsigned long iteration;
 unsigned long lastChange[NUM_BUTTONS]; // NUM_BUTTONS
 
+long longest = -1;
+
 int freeRam ()
 {
     extern int __heap_start, *__brkval;
@@ -118,6 +120,17 @@ void handleInput()
     else if(!strcmp(tokens[0],"#"))
     {
         // comment
+    }
+    else if(!strcmp(tokens[0],"stats"))
+    {
+        Serial.print(F("Milliseconds since start "));
+        Serial.println(millis());
+        Serial.print(F("Loops since start "));
+        Serial.println(iteration);
+        Serial.print(F("Average loop duration "));
+        Serial.println(millis()/iteration);
+        Serial.print(F("Longest loop duration "));
+        Serial.println(longest/iteration);
     }
     else if(!strcmp(tokens[0],"scan"))
     {
@@ -580,6 +593,7 @@ void i2cScan()
 }
 
 bool status = 0;
+long last = 0;
 void loop()
 {
     if(iteration%50 == 0)
@@ -593,6 +607,11 @@ void loop()
 
     delay(10);
     iteration++;
+
+    long interval = millis() - last;
+    last = millis();
+    if(interval > longest)
+        longest = interval;
 
     for(uint8_t i=0;i<NUM_BUTTONS;i++)
     {
