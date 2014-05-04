@@ -530,7 +530,13 @@ void handleInput()
             uint8_t id = atoi(tokens[1]);
             Device *d = Device::getDeviceForId(id);
             if(d != NULL)
+            {
+                Serial.print(F("Saving "));
+                Serial.print(id);
+                Serial.print(F(" ... "));
                 d->saveSettings();
+                Serial.println(F(" ... done"));
+            }
             // Save one
         }
     }

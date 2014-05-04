@@ -85,7 +85,7 @@ void Device::saveSettings()
     Serial.print(F(" bytes for "));
     Serial.print(getTypeName());
     Serial.print(F(" "));
-    Serial.println(getName());
+    Serial.print(getName());
 
     if(size > DEVICE_EEPROM_SIZE)
     {
