@@ -555,6 +555,20 @@ void handleInput()
     {
         digitalClockDisplay();
     }
+    else if(!strcmp(tokens[0],"settime"))
+    {
+        if(tidx == 2)
+        {
+            time_t t = atol(tokens[1]);
+            Serial.println(t);
+            RTC.set(t);
+            digitalClockDisplay();
+        }
+        else
+        {
+            Serial.println(F("settime <time_t>"));
+        }
+    }
     else
     {
         Serial.print(F("Syntax error with token "));
