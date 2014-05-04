@@ -43,7 +43,6 @@ void Dimmer::saveState(uint8_t data)
 {
     data<<=4;
     data |= (_brightness & 0xf); // 16 steps
-    Serial.println(data, HEX);
     Relay::saveState(data);
 }
 
