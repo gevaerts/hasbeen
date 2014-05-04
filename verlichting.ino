@@ -12,6 +12,7 @@
 #include "relayboard.h"
 #include "group.h"
 #include "follower.h"
+#include "pulser.h"
 #include "device.h"
 #include <avr/wdt.h>
 
@@ -368,18 +369,50 @@ void handleInput()
                 }
             }
         }
+        else if(!strcmp(tokens[1],"pulser"))
+        {
+            if(tidx != 7)
+            {
+                Serial.println(F("define pulser <id> <board> <relay> <button> <time>"));
+            }
+            else
+            {
+                uint8_t id, board, relay, button;
+                uint16_t time;
+                id = atoi(tokens[2]);
+                board = atoi(tokens[3]);
+                relay = atoi(tokens[4]);
+                button = atoi(tokens[5]);
+                time = atoi(tokens[6]);
+
+                if(id < 0 || id >= NUM_DEVICES)
+                    Serial.println(F("id out of range"));
+                else if(Device::getDeviceForId(id) != NULL)
+                    Serial.println(F("id not empty"));
+                else if(relay < 1 || relay > 8)
+                    Serial.println(F("relay out of range"));
+                else if(button < 0 || button >= NUM_BUTTONS)
+                    Serial.println(F("button out of range"));
+                else if(Device::getDeviceForButton(button) != NULL)
+                    Serial.println(F("button already in use"));
+                else
+                {
+                    Device *d = new Pulser(id, board, relay, button, time);
+                    d->printInfo();
+                }
+            }
+        }
         else if(!strcmp(tokens[1],"follower"))
         {
             if(tidx != 9)
             {
-                Serial.println(F("define lightpoint <id> <nvSlot> <board> <relay> <master> <delayOn> <delayOff"));
+                Serial.println(F("define follower <id> <board> <relay> <master> <delayOn> <delayOff"));
             }
             else
             {
-                uint8_t id, nvslot, board, relay, master;
+                uint8_t id, board, relay, master;
                 uint16_t delayOn, delayOff;
                 id = atoi(tokens[2]);
-                nvslot = atoi(tokens[3]);
                 board = atoi(tokens[4]);
                 relay = atoi(tokens[5]);
                 master = atoi(tokens[6]);
@@ -396,7 +429,7 @@ void handleInput()
                     Serial.println(F("master out of range"));
                 else
                 {
-                    Device *d = new Follower(id, nvslot, board, relay, master, delayOn, delayOff);
+                    Device *d = new Follower(id, board, relay, master, delayOn, delayOff);
                     d->printInfo();
                 }
             }

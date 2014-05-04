@@ -18,6 +18,7 @@ enum DeviceType
     RELAYBOARD,
     GROUP,
     FOLLOWER,
+    PULSER,
     UNDEFINED = 255
 };
 
