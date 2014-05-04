@@ -11,6 +11,7 @@
 #include "dimmer.h"
 #include "relayboard.h"
 #include "group.h"
+#include "follower.h"
 #include "device.h"
 #include <avr/wdt.h>
 
@@ -363,6 +364,39 @@ void handleInput()
                 else
                 {
                     Device *d = new Group(id, button);
+                    d->printInfo();
+                }
+            }
+        }
+        else if(!strcmp(tokens[1],"follower"))
+        {
+            if(tidx != 9)
+            {
+                Serial.println(F("define lightpoint <id> <nvSlot> <board> <relay> <master> <delayOn> <delayOff"));
+            }
+            else
+            {
+                uint8_t id, nvslot, board, relay, master;
+                uint16_t delayOn, delayOff;
+                id = atoi(tokens[2]);
+                nvslot = atoi(tokens[3]);
+                board = atoi(tokens[4]);
+                relay = atoi(tokens[5]);
+                master = atoi(tokens[6]);
+                delayOn = atoi(tokens[7]);
+                delayOff = atoi(tokens[8]);
+
+                if(id < 0 || id >= NUM_DEVICES)
+                    Serial.println(F("id out of range"));
+                else if(Device::getDeviceForId(id) != NULL)
+                    Serial.println(F("id not empty"));
+                else if(relay < 1 || relay > 8)
+                    Serial.println(F("relay out of range"));
+                else if(master < 0 || master >= NUM_DEVICES)
+                    Serial.println(F("master out of range"));
+                else
+                {
+                    Device *d = new Follower(id, nvslot, board, relay, master, delayOn, delayOff);
                     d->printInfo();
                 }
             }

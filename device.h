@@ -17,6 +17,7 @@ enum DeviceType
     TIMEDRELAY,
     RELAYBOARD,
     GROUP,
+    FOLLOWER,
     UNDEFINED = 255
 };
 
@@ -63,7 +64,7 @@ class Device
         enum DeviceType _type;
         static unsigned char scratch[DEVICE_EEPROM_SIZE];
         static Device *_devicesByButton[NUM_BUTTONS];
-        static Device *_devicesById[NUM_DEVICES]; 
+        static Device *_devicesById[NUM_DEVICES];
         void notifyAll(bool on);
 };
 #endif

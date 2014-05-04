@@ -84,6 +84,10 @@ void Relay::setOn(uint8_t state)
         if(_invert) state = !state;
         ((RelayBoard *)rb)->setOn(_relay, state);
     }
+    if(state)
+        this->on();
+    else
+        this->off();
 }
 
 uint8_t Relay::relayState()
