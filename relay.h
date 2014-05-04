@@ -12,8 +12,8 @@ class Relay: public Device
         virtual ~Relay();
         virtual void press(uint8_t button,uint8_t previousState) {};
         virtual void printInfo();
-        virtual void on() {setOn(1); Device::on();}
-        virtual void off() {setOn(0); Device::off();}
+        virtual void on() {setOn(1); Device::on(); saveState(0);}
+        virtual void off() {setOn(0); Device::off(); saveState(0);}
         virtual char *getTypeName() {return "Relay";};
         virtual void printDefinition(uint8_t first);
         virtual bool isType(enum DeviceType type);
