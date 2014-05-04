@@ -24,7 +24,6 @@ Device::Device(uint8_t id, uint8_t nvSlot, enum DeviceType type)
 
 Device::Device(uint8_t id, unsigned char *initData)
 {
-    Serial.print(F("Restoring device data for device "));
     Serial.println(id);
     _offset = 0;
     _type = (enum DeviceType) initData[_offset++];
@@ -51,19 +50,14 @@ Device::~Device()
 uint8_t Device::restoreState()
 {
     uint8_t data = 0;
-    Serial.print(F("reading device state for device "));
-    Serial.print(_id);
-    Serial.print(F(" ... 0x"));
     if(_nvSlot != NO_NVSLOT)
     {
         NVRAM.getRAM(_nvSlot, &data, 1);
     }
-    Serial.println(data,HEX);
     return data;
 }
 void Device::saveState(uint8_t data)
 {
-    Serial.print(F("saving device state : 0x"));
     Serial.println(data);
     if(_nvSlot != NO_NVSLOT)
     {
@@ -73,8 +67,6 @@ void Device::saveState(uint8_t data)
 
 uint8_t Device::saveConfig(unsigned char *initData)
 {
-    Serial.println(F("Saving device data"));
-
     uint8_t offset = 0;
     initData[offset++] = _type;
     initData[offset++] = _id;
@@ -127,7 +119,6 @@ void Device::setName(char *name)
 
 void Device::restore(uint8_t id)
 {
-    Serial.println(F("Loading device data"));
     Device *device = NULL;
     uint16_t baseAddress = id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
     enum DeviceType type = (enum DeviceType) EEPROM.read(baseAddress);

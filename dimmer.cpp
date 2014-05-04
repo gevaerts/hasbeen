@@ -25,7 +25,6 @@ Dimmer::Dimmer(uint8_t id, uint8_t nvSlot, uint8_t board, uint8_t relay, uint8_t
 
 Dimmer::Dimmer(uint8_t id, unsigned char *initData) : Relay(id, initData)
 {
-    Serial.println(F("Restoring dimmer data"));
     _buttonPlus = initData[_offset++];
     _buttonMin = initData[_offset++];
     _pwm = initData[_offset++];
@@ -42,7 +41,6 @@ Dimmer::~Dimmer()
 
 void Dimmer::saveState(uint8_t data)
 {
-    Serial.print(F("Saving dimmer state : 0x"));
     data<<=4;
     data |= (_brightness & 0xf); // 16 steps
     Serial.println(data, HEX);
@@ -54,8 +52,6 @@ uint8_t Dimmer::restoreState()
     uint8_t data = Relay::restoreState();
     _brightness = data & 0x0f; // 16 steps
     data >>=4;
-    Serial.print(F("Restoring dimmer brightness to "));
-    Serial.println(_brightness);
     writeBrightness();
     return data;
 }
@@ -64,7 +60,6 @@ uint8_t Dimmer::restoreState()
 
 uint8_t Dimmer::saveConfig(unsigned char *initData)
 {
-    Serial.println(F("Saving dimmer data"));
     uint8_t offset = Relay::saveConfig(initData);
     initData[offset++]=_buttonPlus;
     initData[offset++]=_buttonMin;
@@ -103,14 +98,10 @@ void Dimmer::writeBrightness()
 
 void Dimmer::press(uint8_t button,uint8_t previousState)
 {
-    Serial.print(F("Dimmer press "));
     // Dimmers will handle continuous presses, so we can ignore previousState
     bool switchOff = 0;
     if(button == _buttonPlus)
     {
-        Serial.print(F("Increment "));
-        Serial.println(_pwm,DEC);
-
         uint8_t otherState = digitalRead(buttons[_buttonMin]);
         if(otherState == 0)
             switchOff = 1;
@@ -119,17 +110,12 @@ void Dimmer::press(uint8_t button,uint8_t previousState)
     }
     else if(button == _buttonMin)
     {
-        Serial.print(F("Decrement "));
-        Serial.println(_pwm,DEC);
-
         uint8_t otherState = digitalRead(buttons[_buttonPlus]);
         if(otherState == 0)
             switchOff = 1;
         else
             _brightness = constrain(_brightness - 1, 0, DIMMER_STEPS);
     }
-    Serial.print(F("Dimmer brightness "));
-    Serial.println(_brightness,DEC);
     if(_brightness == 0)
         switchOff = 1;
 

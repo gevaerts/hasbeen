@@ -618,10 +618,12 @@ void loop()
             {
                 Serial.print(F("Button "));
                 Serial.print(i,DEC);
-                Serial.println((" pressed"));
+                Serial.println(F(" pressed"));
                 Device *d = Device::getDeviceForButton(i);
                 if(d != NULL)
                 {
+                    Serial.print(F("Handled by device "));
+                    Serial.println(d->getName());
                     uint8_t previous = buttonState[i];
                     if(changed)
                         previous = !buttonState[i];

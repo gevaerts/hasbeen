@@ -17,14 +17,12 @@ RelayBoard::RelayBoard(uint8_t id, uint8_t address) : Device(id, NO_NVSLOT, RELA
 
 RelayBoard::RelayBoard(uint8_t id, unsigned char *initData): Device(id,initData)
 {
-    Serial.println(F("Restoring relayboard data"));
     _address = initData[_offset++];
     init();
 }
 
 RelayBoard::~RelayBoard()
 {
-    Serial.println(F("Deleting relayboard"));
     _board->off();
     delete _board;
 }
@@ -44,8 +42,6 @@ void RelayBoard::setAddress(uint8_t address)
 
 uint8_t RelayBoard::saveConfig(unsigned char *initData)
 {
-    Serial.println(F("Saving relayboard data"));
-
     uint8_t offset = Device::saveConfig(initData);
     initData[offset++]=_address;
     return offset;

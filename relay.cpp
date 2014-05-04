@@ -18,8 +18,6 @@ uint8_t Relay::restoreState()
     uint8_t data = Device::restoreState();
     _relayState = data & 0x01;
     data >>=1;
-    Serial.print(F("Restoring relay state to "));
-    Serial.println(_relayState);
     setOn(_relayState);
     return data;
 }
@@ -39,7 +37,6 @@ Relay::Relay(uint8_t id, uint8_t nvSlot, uint8_t board, uint8_t relay): Relay(id
 
 Relay::Relay(uint8_t id, unsigned char *initData): Device(id,initData)
 {
-    Serial.println(F("Restoring relay data"));
     _board = initData[_offset++];
     _relay = initData[_offset++];
     _invert = initData[_offset++];
@@ -48,13 +45,10 @@ Relay::Relay(uint8_t id, unsigned char *initData): Device(id,initData)
 
 Relay::~Relay()
 {
-    Serial.println(F("Deleting relay"));
 }
 
 uint8_t Relay::saveConfig(unsigned char *initData)
 {
-    Serial.println(F("Saving relay data"));
-
     uint8_t offset = Device::saveConfig(initData);
     initData[offset++]=_board;
     initData[offset++]=_relay;

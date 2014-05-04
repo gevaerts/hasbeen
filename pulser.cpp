@@ -17,7 +17,6 @@ Pulser::Pulser(uint8_t id, uint8_t board, uint8_t relay, uint8_t button, uint16_
 
 Pulser::Pulser(uint8_t id, unsigned char *initData): Relay(id,initData)
 {
-    Serial.println(F("Restoring pulser data"));
     _button = initData[_offset++];
     _time = initData[_offset++]<<8;
     _time += initData[_offset++];
@@ -30,7 +29,6 @@ Pulser::~Pulser()
 
 uint8_t Pulser::saveConfig(unsigned char *initData)
 {
-    Serial.println(F("Saving pulser data"));
     uint8_t offset = Relay::saveConfig(initData);
     initData[offset++]=_button;
     initData[offset++]=_time>>8;

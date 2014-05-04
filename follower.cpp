@@ -18,7 +18,6 @@ Follower::Follower(uint8_t id, uint8_t board, uint8_t relay, uint8_t master, uin
 
 Follower::Follower(uint8_t id, unsigned char *initData): Relay(id,initData)
 {
-    Serial.println(F("Restoring follower data"));
     _master = initData[_offset++];
     _delayOn = initData[_offset++]<<8;
     _delayOn += initData[_offset++];
@@ -33,7 +32,6 @@ Follower::~Follower()
 
 uint8_t Follower::saveConfig(unsigned char *initData)
 {
-    Serial.println(F("Saving follower data"));
     uint8_t offset = Relay::saveConfig(initData);
     initData[offset++]=_master;
     initData[offset++]=_delayOn>>8;

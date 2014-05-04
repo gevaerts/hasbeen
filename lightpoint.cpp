@@ -16,7 +16,6 @@ Lightpoint::Lightpoint(uint8_t id, uint8_t nvSlot, uint8_t board, uint8_t relay,
 
 Lightpoint::Lightpoint(uint8_t id, unsigned char *initData): Relay(id,initData)
 {
-    Serial.println(F("Restoring lightpoint data"));
     _button = initData[_offset++];
     init();
 }
@@ -27,7 +26,6 @@ Lightpoint::~Lightpoint()
 
 uint8_t Lightpoint::saveConfig(unsigned char *initData)
 {
-    Serial.println(F("Saving lightpoint data"));
     uint8_t offset = Relay::saveConfig(initData);
     initData[offset++]=_button;
     return offset;
@@ -42,11 +40,6 @@ void Lightpoint::printInfo()
 
 void Lightpoint::press(uint8_t button, uint8_t previousState)
 {
-    Serial.print(F("Simple "));
-    Serial.print(_button,DEC);
-    Serial.print(F(" previous state "));
-    Serial.println(previousState,DEC);
-
     // If previousState was PRESSED, ignore this
     if((previousState == RELEASED) && button == _button)
     {

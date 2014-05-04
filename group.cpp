@@ -9,7 +9,6 @@ void Group::init()
 
 Group::Group(uint8_t id, unsigned char *initData) : Device(id,initData)
 {
-    Serial.println(F("Restoring group data"));
     _button = initData[_offset++];
     memcpy(_memberBitmap,&initData[_offset],sizeof(_memberBitmap));
     _offset+=sizeof(_memberBitmap);
@@ -30,8 +29,6 @@ Group::~Group()
 
 uint8_t Group::saveConfig(unsigned char *initData)
 {
-    Serial.println(F("Saving group data"));
-
     uint8_t offset = Device::saveConfig(initData);
     initData[offset++] = _button;
     memcpy(&initData[offset],_memberBitmap,sizeof(_memberBitmap));
@@ -120,11 +117,6 @@ void Group::off()
 
 void Group::press(uint8_t button, uint8_t previousState)
 {
-    Serial.print(F("Simple "));
-    Serial.print(_button,DEC);
-    Serial.print(F(" previous state "));
-    Serial.println(previousState,DEC);
-
     // If previousState was PRESSED, ignore this
     if((previousState == RELEASED) && button == _button)
     {
