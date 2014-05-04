@@ -155,32 +155,6 @@ void handleInput()
         }
         Serial.println(F("save"));
     }
-    else if(!strcmp(tokens[0],"on"))
-    {
-        if(tidx == 2)
-        {
-            Device *d = Device::getDeviceForId(atoi(tokens[1]));
-            if(d!=NULL)
-                d->on();
-        }
-        else
-        {
-            Serial.println(F("on <deviceId>"));
-        }
-    }
-    else if(!strcmp(tokens[0],"off"))
-    {
-        if(tidx == 2)
-        {
-            Device *d = Device::getDeviceForId(atoi(tokens[1]));
-            if(d!=NULL)
-                d->off();
-        }
-        else
-        {
-            Serial.println(F("off <deviceId>"));
-        }
-    }
     else if(!strcmp(tokens[0],"devices"))
     {
         for(uint8_t i=0;i<NUM_DEVICES;i++)
