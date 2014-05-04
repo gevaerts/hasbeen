@@ -118,11 +118,6 @@ void Group::off()
     Device::off();
 }
 
-bool Group::respondsToButton(uint8_t button)
-{
-    return (button == _button);
-}
-
 void Group::press(uint8_t button, uint8_t previousState)
 {
     Serial.print(F("Simple "));

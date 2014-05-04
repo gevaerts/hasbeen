@@ -101,11 +101,6 @@ void Dimmer::writeBrightness()
         analogWrite(pwms[_pwm],~absoluteBrightness);
 }
 
-bool Dimmer::respondsToButton(uint8_t button)
-{
-    return (button == _buttonPlus || button == _buttonMin);
-}
-
 void Dimmer::press(uint8_t button,uint8_t previousState)
 {
     Serial.print(F("Dimmer press "));

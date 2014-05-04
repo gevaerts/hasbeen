@@ -10,7 +10,6 @@ class Lightpoint: public Relay
         Lightpoint(uint8_t id, unsigned char *initData);
         virtual ~Lightpoint();
         virtual void press(uint8_t button,uint8_t previousState);
-        virtual bool respondsToButton(uint8_t button);
         virtual void printInfo();
         virtual char *getTypeName() {return "Lightpoint";};
         virtual void printDefinition(uint8_t first);

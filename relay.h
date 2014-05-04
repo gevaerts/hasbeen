@@ -11,7 +11,6 @@ class Relay: public Device
         Relay(uint8_t id, unsigned char *initdata);
         virtual ~Relay();
         virtual void press(uint8_t button,uint8_t previousState) {};
-        virtual bool respondsToButton(uint8_t button) {};
         virtual void printInfo();
         virtual void on() {setOn(1); Device::on();}
         virtual void off() {setOn(0); Device::off();}

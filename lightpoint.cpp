@@ -40,11 +40,6 @@ void Lightpoint::printInfo()
     Serial.println(_button);
 }
 
-bool Lightpoint::respondsToButton(uint8_t button)
-{
-    return (button == _button);
-}
-
 void Lightpoint::press(uint8_t button, uint8_t previousState)
 {
     Serial.print(F("Simple "));

@@ -16,7 +16,6 @@ class Group: public Device
         virtual void on();
         virtual void off();
         virtual void press(uint8_t button,uint8_t previousState);
-        virtual bool respondsToButton(uint8_t button);
         virtual char *getTypeName() {return "Group";};
         virtual void printDefinition(uint8_t first);
         virtual bool isType(enum DeviceType type);
