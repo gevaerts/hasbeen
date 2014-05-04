@@ -88,6 +88,13 @@ uint8_t Device::saveConfig(unsigned char *initData)
 void Device::saveSettings()
 {
     uint8_t size = saveConfig(scratch);
+    Serial.print(F("Saved "));
+    Serial.print(size);
+    Serial.print(F(" bytes for "));
+    Serial.print(getTypeName());
+    Serial.print(F(" "));
+    Serial.println(getName());
+
     if(size > DEVICE_EEPROM_SIZE)
     {
         Serial.println(F("Error! Save size too large"));
