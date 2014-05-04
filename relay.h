@@ -18,6 +18,7 @@ class Relay: public Device
         virtual void printDefinition(uint8_t first);
         virtual bool isType(enum DeviceType type);
         virtual void setInvert(uint8_t invert) {_invert = invert;};
+        virtual void loop() {};
     protected:
         virtual uint8_t saveConfig(unsigned char *initData);
         virtual uint8_t restoreState();

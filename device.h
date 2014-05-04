@@ -42,6 +42,7 @@ class Device
         virtual void off();
         virtual char *getTypeName() {return "Device";};
         virtual void printDefinition(uint8_t first);
+        virtual void loop() {};
         enum DeviceType getType()
         {
             return _type;

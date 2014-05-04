@@ -4,6 +4,8 @@
 
 void Follower::init()
 {
+    _waitingForOn = 0;
+    _waitingForOff = 0;
 }
 
 Follower::Follower(uint8_t id, uint8_t nvSlot, uint8_t board, uint8_t relay, uint8_t master, uint16_t delayOn, uint16_t delayOff):Relay(id, nvSlot, board, relay, FOLLOWER)
@@ -65,10 +67,40 @@ void Follower::printDefinition(uint8_t first)
 
 void Follower::notify(uint8_t device, bool on)
 {
-    // TODO implement delay
     if(device == _master)
     {
+        if(on)
+        {
+            _onRequest = millis();
+            _waitingForOn = 1;
+        }
+        else
+        {
+            _offRequest = millis();
+            _waitingForOff = 1;
+        }
+
         setOn(on);
+    }
+}
+
+void Follower::loop()
+{
+    if(_waitingForOn)
+    {
+        if((millis() - _onRequest)/1000 >= _delayOn)
+        {
+            _waitingForOn = 0;
+            setOn(1);
+        }
+    }
+    if(_waitingForOff)
+    {
+        if((millis() - _offRequest)/1000 >= _delayOff)
+        {
+            _waitingForOff = 0;
+            setOn(0);
+        }
     }
 }
 

@@ -624,4 +624,12 @@ void loop()
             }
         }
     }
+    for(uint8_t i=0;i<NUM_DEVICES;i++)
+    {
+        Device *d = Device::getDeviceForId(i);
+        if(d!=NULL)
+        {
+            d->loop();
+        }
+    }
 }

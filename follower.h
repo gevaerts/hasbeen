@@ -14,6 +14,7 @@ class Follower: public Relay
         virtual char *getTypeName() {return "Follower";};
         virtual void printDefinition(uint8_t first);
         virtual bool isType(enum DeviceType type);
+        virtual void loop();
     protected:
         virtual uint8_t saveConfig(unsigned char *initData);
     private:
@@ -21,5 +22,9 @@ class Follower: public Relay
         uint8_t _master;
         uint16_t _delayOn;
         uint16_t _delayOff;
+        long _onRequest;
+        long _offRequest;
+        uint8_t _waitingForOn;
+        uint8_t _waitingForOff;
 };
 #endif
