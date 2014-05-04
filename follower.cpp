@@ -8,18 +8,17 @@ void Follower::init()
     _waitingForOff = 0;
 }
 
-Follower::Follower(uint8_t id, uint8_t nvSlot, uint8_t board, uint8_t relay, uint8_t master, uint16_t delayOn, uint16_t delayOff):Relay(id, nvSlot, board, relay, FOLLOWER)
+Follower::Follower(uint8_t id, uint8_t board, uint8_t relay, uint8_t master, uint16_t delayOn, uint16_t delayOff):Relay(id, NO_NVSLOT, board, relay, FOLLOWER)
 {
     _master = master;
     _delayOn = delayOn;
     _delayOff = delayOff;
     init();
-    saveState(0);
 }
 
 Follower::Follower(uint8_t id, unsigned char *initData): Relay(id,initData)
 {
-    Serial.println(F("Restoring lightpoint data"));
+    Serial.println(F("Restoring follower data"));
     _master = initData[_offset++];
     _delayOn = initData[_offset++]<<8;
     _delayOn += initData[_offset++];
@@ -34,7 +33,7 @@ Follower::~Follower()
 
 uint8_t Follower::saveConfig(unsigned char *initData)
 {
-    Serial.println(F("Saving lightpoint data"));
+    Serial.println(F("Saving follower data"));
     uint8_t offset = Relay::saveConfig(initData);
     initData[offset++]=_master;
     initData[offset++]=_delayOn>>8;
@@ -59,7 +58,7 @@ void Follower::printDefinition(uint8_t first)
 {
     {
         char buffer[40];
-        sprintf(buffer,"define follower %d %d %d %d %d %d %d",getId(), getNVSlot(), getBoard(), getRelay(), _master, _delayOn, _delayOff);
+        sprintf(buffer,"define follower %d %d %d %d %d %d",getId(), getBoard(), getRelay(), _master, _delayOn, _delayOff);
         Serial.println(buffer);
     }
     Device::printDefinition(0);

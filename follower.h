@@ -6,7 +6,7 @@
 class Follower: public Relay
 {
     public:
-        Follower(uint8_t id, uint8_t nvSlot, uint8_t board, uint8_t relay,uint8_t master, uint16_t delayOn, uint16_t delayOff);
+        Follower(uint8_t id, uint8_t board, uint8_t relay,uint8_t master, uint16_t delayOn, uint16_t delayOff);
         Follower(uint8_t id, unsigned char *initData);
         virtual ~Follower();
         virtual void printInfo();
