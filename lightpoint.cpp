@@ -23,8 +23,6 @@ Lightpoint::Lightpoint(uint8_t id, unsigned char *initData): Relay(id,initData)
 
 Lightpoint::~Lightpoint()
 {
-    Serial.println(F("Deleting lightpoint"));
-    unregisterButton(_button, this);
 }
 
 uint8_t Lightpoint::saveConfig(unsigned char *initData)

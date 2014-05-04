@@ -26,7 +26,6 @@ Group::Group(uint8_t id, uint8_t button) : Device(id, NO_NVSLOT, GROUP)
 
 Group::~Group()
 {
-    unregisterButton(_button, this);
 }
 
 uint8_t Group::saveConfig(unsigned char *initData)

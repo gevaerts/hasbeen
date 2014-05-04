@@ -39,6 +39,7 @@ Device::Device(uint8_t id, unsigned char *initData)
 
 Device::~Device()
 {
+    unregisterButtons(this);
     Serial.println(F("Deleting device"));
     _type = UNDEFINED;
     uint16_t baseAddress = _id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
@@ -167,13 +168,15 @@ Device *Device::getDeviceForButton(uint8_t button)
 
 void Device::registerButton(uint8_t button, Device *device)
 {
-    _devicesByButton[button] = device;
+    if(button >= 0)
+        _devicesByButton[button] = device;
 }
 
-void Device::unregisterButton(uint8_t button, Device *device)
+void Device::unregisterButtons(Device *device)
 {
-    if(_devicesByButton[button] == device)
-        _devicesByButton[button] = NULL;
+    for(uint8_t i=0;i<NUM_BUTTONS;i++)
+        if(_devicesByButton[i] == device)
+            _devicesByButton[i] = NULL;
 }
 
 Device *Device::getDeviceForId(uint8_t id)
