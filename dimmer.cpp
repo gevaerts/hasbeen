@@ -88,7 +88,7 @@ void Dimmer::printInfo()
 
 void Dimmer::writeBrightness()
 {
-    // TODO calibration
+    // TODO autocalibration?
     // TODO non-linear scaling?
     uint8_t absoluteBrightness = _min + (_brightness * (_max - _min) / DIMMER_STEPS);
     if(_pwm >= 0 && _pwm < NUM_PWMS)
@@ -135,6 +135,8 @@ void Dimmer::printDefinition(uint8_t first)
     {
         char buffer[40];
         sprintf(buffer,"define dimmer %d %d %d %d %d %d %d",getId(), getNVSlot(), getBoard(), getRelay(), _buttonPlus, _buttonMin, _pwm);
+        Serial.println(buffer);
+        sprintf(buffer,"calibrate %d %d %d",getId(), _min, _max);
         Serial.println(buffer);
     }
     Relay::printDefinition(0);

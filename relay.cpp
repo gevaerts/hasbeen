@@ -86,6 +86,7 @@ uint8_t Relay::relayState()
 
 void Relay::printDefinition(uint8_t first)
 {
+    if(_invert != 0)
     {
         char buffer[40];
         sprintf(buffer,"setinvert %d %d",getId(), _invert);

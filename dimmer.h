@@ -16,6 +16,8 @@ class Dimmer: public Relay
         virtual char *getTypeName() {return "Dimmer";};
         virtual void printDefinition(uint8_t first);
         virtual bool isType(enum DeviceType type);
+        virtual void setMin(uint8_t min) {_min=min;};
+        virtual void setMax(uint8_t max) {_max=max;};
     protected:
         virtual uint8_t saveConfig(unsigned char *initData);
         virtual uint8_t restoreState();

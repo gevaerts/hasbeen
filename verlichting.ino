@@ -16,8 +16,8 @@
 #include "device.h"
 #include <avr/wdt.h>
 
-#define STATUS1 22
-#define STATUS2 23
+#define STATUS1 14
+#define STATUS2 15
 
 uint8_t buttonState[NUM_BUTTONS]; // NUM_BUTTONS
 uint8_t buttonCount[NUM_BUTTONS]; // NUM_BUTTONS
@@ -269,6 +269,20 @@ void handleInput()
             ((Relay *)d)->setInvert(invert);
         }
     }
+    else if(!strcmp(tokens[0],"calibrate") && tidx == 4)
+    {
+        uint8_t id = atoi(tokens[1]);
+        uint8_t min = atoi(tokens[2]);
+        uint8_t max = atoi(tokens[3]);
+        Device *d = Device::getDeviceForId(id);
+        if(d != NULL && d->getType() == DIMMEDLIGHT)
+        {
+            Dimmer *dim = (Dimmer *)d;
+            dim->setMin(min);
+            dim->setMax(min);
+            d->printInfo();
+        }
+    }
     else if(!strcmp(tokens[0],"setaddress") && tidx == 3)
     {
         uint8_t id = atoi(tokens[1]);
@@ -348,6 +362,8 @@ void handleInput()
                     Serial.println(F("buttonMin out of range"));
                 else if(Device::getDeviceForButton(buttonMin) != NULL)
                     Serial.println(F("buttonMin already in use"));
+                else if(pwm < 0 || pwm >= NUM_PWMS)
+                    Serial.println(F("pwm out of range"));
                 else
                 {
                     Device *d = new Dimmer(id, nvslot, board, relay,buttonPlus,buttonMin,pwm);
