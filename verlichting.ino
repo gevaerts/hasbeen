@@ -19,10 +19,12 @@
 #define STATUS1 14
 #define STATUS2 15
 
-uint8_t buttonState[NUM_BUTTONS]; // NUM_BUTTONS
-uint8_t buttonCount[NUM_BUTTONS]; // NUM_BUTTONS
+uint8_t buttonState[NUM_BUTTONS];
+uint8_t buttonCount[NUM_BUTTONS];
 unsigned long iteration;
-unsigned long lastChange[NUM_BUTTONS]; // NUM_BUTTONS
+unsigned long lastChange[NUM_BUTTONS];
+
+uint8_t buttonAliases[NUM_BUTTONS];
 
 long longest = -1;
 
@@ -51,6 +53,10 @@ void setup()
         digitalClockDisplay();
     }
 
+    for(uint8_t i=0;i<NUM_BUTTONS;i++)
+    {
+        buttonAliases[i]=EEPROM.read(ALIAS_EEPROM_BASE + i);
+    }
     for(uint8_t i=0;i<NUM_DEVICES;i++)
     {
         Device::restore(i);
@@ -138,6 +144,10 @@ void handleInput()
     }
     else if(!strcmp(tokens[0],"cleareeprom") && tidx == 1)
     {
+        for(uint8_t i=0;i<NUM_BUTTONS;i++)
+        {
+            EEPROM.write(ALIAS_EEPROM_BASE + i, -1);
+        }
         for(uint8_t i = 0; i < NUM_DEVICES; i++)
         {
             uint16_t baseAddress = i * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
@@ -163,6 +173,17 @@ void handleInput()
                 if(d!=NULL)
                 {
                     d->printDefinition(1);
+                }
+            }
+            for(uint8_t i=0;i<NUM_BUTTONS;i++)
+            {
+                if(buttonAliases[i] != 0xFF)
+                {
+                    Serial.print(F("alias "));
+                    Serial.print(i,DEC);
+                    Serial.print(F(" "));
+                    Serial.print(buttonAliases[i],DEC);
+                    Serial.print(F("\n"));
                 }
             }
         }
@@ -523,6 +544,19 @@ void handleInput()
             Serial.println(F("define {dimmer|lightpoint|relayboard} ..."));
         }
     }
+    else if(!strcmp(tokens[0],"alias"))
+    {
+        if(tidx == 3)
+        {
+            uint8_t button = atol(tokens[1]);
+            uint8_t mapped_to = atol(tokens[2]);
+            buttonAliases[button]=mapped_to;
+        }
+        else
+        {
+            Serial.println(F("alias <button> <mapped_to>"));
+        }
+    }
     else if(!strcmp(tokens[0],"save"))
     {
         if(tidx == 1)
@@ -539,6 +573,10 @@ void handleInput()
                     d->saveSettings();
                     Serial.println(F("done"));
                 }
+            }
+            for(uint8_t i=0;i<NUM_BUTTONS;i++)
+            {
+                EEPROM.write(ALIAS_EEPROM_BASE + i, buttonAliases[i]);
             }
         }
         else
@@ -697,10 +735,16 @@ void loop()
         {
             if(buttonState[i] == PRESSED)
             {
+                uint8_t button = i;
+                if(buttonAliases[i] != 0xFF)
+                    button = buttonAliases[i];
+
                 Serial.print(F("Button "));
                 Serial.print(i,DEC);
+                Serial.print(F(" aliased to "));
+                Serial.print(button,DEC);
                 Serial.println(F(" pressed"));
-                Device *d = Device::getDeviceForButton(i);
+                Device *d = Device::getDeviceForButton(button);
                 if(d != NULL)
                 {
                     Serial.print(F("Handled by device "));
@@ -709,7 +753,7 @@ void loop()
                     if(changed)
                         previous = !buttonState[i];
 
-                    d->press(i,previous);
+                    d->press(button,previous);
                 }
             }
         }

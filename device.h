@@ -2,10 +2,7 @@
 #define DEVICE_H
 
 #define DEVICE_EEPROM_SIZE 32
-#define DEVICE_EEPROM_BASE 128
 #define DEVICE_EEPROM_INDEX 0
-#define NUM_DEVICES 64
-
 
 #include "setup.h"
 

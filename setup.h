@@ -5,6 +5,9 @@
 
 #define NUM_PWMS 12
 #define NUM_BUTTONS 48
+#define DEVICE_EEPROM_BASE 128
+#define ALIAS_EEPROM_BASE 0
+#define NUM_DEVICES 64
 
 extern const uint8_t buttons[NUM_BUTTONS];
 extern const uint8_t pwms[NUM_PWMS];
