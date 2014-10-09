@@ -4,7 +4,7 @@
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 #define NUM_PWMS 12
-#define NUM_BUTTONS 48
+#define NUM_BUTTONS 50
 #define DEVICE_EEPROM_BASE 128
 #define ALIAS_EEPROM_BASE 0
 #define NUM_DEVICES 64
