@@ -101,7 +101,7 @@ void Dimmer::press(uint8_t button,uint8_t previousState)
     bool switchOff = 0;
     if(button == _buttonPlus)
     {
-        uint8_t otherState = digitalRead(buttons[_buttonMin]);
+        uint8_t otherState = buttonStatus(buttons[_buttonMin]);
         if(otherState == 0)
             switchOff = 1;
         else
@@ -109,7 +109,7 @@ void Dimmer::press(uint8_t button,uint8_t previousState)
     }
     else if(button == _buttonMin)
     {
-        uint8_t otherState = digitalRead(buttons[_buttonPlus]);
+        uint8_t otherState = buttonStatus(buttons[_buttonPlus]);
         if(otherState == 0)
             switchOff = 1;
         else

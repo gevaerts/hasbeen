@@ -692,6 +692,21 @@ void i2cScan()
 
 }
 
+uint8_t buttonStatus(int button)
+{
+    for(uint8_t i=0;i<NUM_BUTTONS;i++)
+    {
+        if(buttonAliases[i] == button)
+        {
+            if(buttonState[i] == PRESSED)
+            {
+                return PRESSED;
+            }
+        }
+    }
+    return RELEASED;
+}
+
 bool status = 0;
 unsigned long last = 0;
 void loop()
