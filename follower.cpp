@@ -99,6 +99,7 @@ void Follower::loop()
             setOn(0);
         }
     }
+    Relay::loop();
 }
 
 bool Follower::isType(enum DeviceType type)

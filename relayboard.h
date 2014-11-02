@@ -14,6 +14,7 @@ class RelayBoard: public Device
         virtual ~RelayBoard();
         virtual void printInfo();
         void setOn(uint8_t relay, uint8_t state);
+        void delayedSetOn(uint8_t relay, uint8_t state, int seconds);
         void setAddress(uint8_t address);
         virtual char *getTypeName() {return "RelayBoard";};
         virtual void printDefinition(uint8_t first);

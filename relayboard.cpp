@@ -52,6 +52,11 @@ void RelayBoard::setOn(uint8_t relay,uint8_t state)
     _board->click(relay, state, 1);
 }
 
+void RelayBoard::delayedSetOn(uint8_t relay,uint8_t state, int seconds)
+{
+    _board->click(relay, state, 1 + seconds * 13);
+}
+
 void RelayBoard::printInfo()
 {
     Device::printInfo();

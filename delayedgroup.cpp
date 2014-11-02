@@ -185,6 +185,7 @@ void DelayedGroup::loop()
             off();
         }
     }
+    Device::loop();
 }
 
 bool DelayedGroup::isType(enum DeviceType type)

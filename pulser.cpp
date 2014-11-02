@@ -65,6 +65,7 @@ void Pulser::loop()
             setOn(0);
         }
     }
+    Relay::loop();
 }
 
 void Pulser::press(uint8_t button, uint8_t previousState)
