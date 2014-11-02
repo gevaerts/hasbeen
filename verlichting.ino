@@ -13,6 +13,7 @@
 #include "group.h"
 #include "follower.h"
 #include "pulser.h"
+#include "delayedgroup.h"
 #include "device.h"
 #include <avr/wdt.h>
 
@@ -333,6 +334,11 @@ void handleInput()
                 ((Group *)d)->addMember(id);
                 d->printInfo();
             }
+            else if(d != NULL && d->getType() == DELAYEDGROUP)
+            {
+                ((DelayedGroup *)d)->addMember(id);
+                d->printInfo();
+            }
         }
         else if (tidx == 4 && !strcmp(tokens[1],"remove"))
         {
@@ -342,6 +348,11 @@ void handleInput()
             if(d != NULL && d->getType() == GROUP)
             {
                 ((Group *)d)->removeMember(id);
+                d->printInfo();
+            }
+            else if(d != NULL && d->getType() == DELAYEDGROUP)
+            {
+                ((DelayedGroup *)d)->removeMember(id);
                 d->printInfo();
             }
         }
@@ -415,6 +426,34 @@ void handleInput()
                 else
                 {
                     Device *d = new Group(id, button);
+                    d->printInfo();
+                }
+            }
+        }
+        else if(!strcmp(tokens[1],"delayedgroup"))
+        {
+            if(tidx != 6)
+            {
+                Serial.println(F("define delayedgroup <id> <master> <delayOn> <delayOff>"));
+            }
+            else
+            {
+                uint8_t id, master;
+                uint16_t delayOn, delayOff;
+                id = atoi(tokens[2]);
+                master = atoi(tokens[3]);
+                delayOn = atoi(tokens[4]);
+                delayOff = atoi(tokens[5]);
+
+                if(id < 0 || id >= NUM_DEVICES)
+                    Serial.println(F("id out of range"));
+                else if(Device::getDeviceForId(id) != NULL)
+                    Serial.println(F("id not empty"));
+                else if(master < 0 || master >= NUM_DEVICES)
+                    Serial.println(F("master out of range"));
+                else
+                {
+                    Device *d = new DelayedGroup(id, master, delayOn, delayOff);
                     d->printInfo();
                 }
             }

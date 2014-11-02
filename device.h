@@ -16,6 +16,7 @@ enum DeviceType
     GROUP,
     FOLLOWER,
     PULSER,
+    DELAYEDGROUP,
     UNDEFINED = 255
 };
 
