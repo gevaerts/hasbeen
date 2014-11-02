@@ -752,7 +752,15 @@ void loop()
             {
                 uint8_t button = i;
                 if(buttonAliases[i] != 0xFF)
+                {
                     button = buttonAliases[i];
+                }
+                else
+                {
+                    Serial.print(F("Unaliased button "));
+                    Serial.print(i,DEC);
+                    Serial.println(F(" pressed. This is not expected to work with all devices!"));
+                }
 
                 Serial.print(F("Button "));
                 Serial.print(i,DEC);
