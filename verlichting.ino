@@ -28,6 +28,7 @@ unsigned long lastChange[NUM_BUTTONS];
 uint8_t buttonAliases[NUM_BUTTONS];
 
 long longest = -1;
+uint8_t verbose = 0;
 
 int freeRam ()
 {
@@ -662,6 +663,17 @@ void handleInput()
             Serial.println(F("settime <time_t>"));
         }
     }
+    else if(!strcmp(tokens[0],"verbose"))
+    {
+        if (tidx == 2 && !strcmp(tokens[1],"off"))
+        {
+            verbose = 0;
+        }
+        else
+        {
+            verbose = 1;
+        }
+    }
     else
     {
         Serial.print(F("Syntax error with token "));
@@ -801,16 +813,22 @@ void loop()
                     Serial.println(F(" pressed. This is not expected to work with all devices!"));
                 }
 
-                Serial.print(F("Button "));
-                Serial.print(i,DEC);
-                Serial.print(F(" aliased to "));
-                Serial.print(button,DEC);
-                Serial.println(F(" pressed"));
+                if(verbose)
+                {
+                    Serial.print(F("Button "));
+                    Serial.print(i,DEC);
+                    Serial.print(F(" aliased to "));
+                    Serial.print(button,DEC);
+                    Serial.println(F(" pressed"));
+                }
                 Device *d = Device::getDeviceForButton(button);
                 if(d != NULL)
                 {
-                    Serial.print(F("Handled by device "));
-                    Serial.println(d->getName());
+                    if(verbose)
+                    {
+                        Serial.print(F("Handled by device "));
+                        Serial.println(d->getName());
+                    }
                     uint8_t previous = buttonState[i];
                     if(changed)
                         previous = !buttonState[i];

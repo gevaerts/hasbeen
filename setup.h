@@ -16,5 +16,6 @@ extern const uint8_t pwms[NUM_PWMS];
 #define RELEASED 1
 
 uint8_t buttonStatus(int button);
+extern uint8_t verbose;
 
 #endif
