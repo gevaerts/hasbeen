@@ -10,6 +10,7 @@ void DelayedGroup::init()
 
 DelayedGroup::DelayedGroup(uint8_t id, uint8_t master, uint16_t delayOn, uint16_t delayOff):Device(id, NO_NVSLOT, DELAYEDGROUP)
 {
+    memset(_memberBitmap, 0, sizeof(_memberBitmap));
     _master = master;
     _delayOn = delayOn;
     _delayOff = delayOff;

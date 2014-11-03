@@ -9,6 +9,7 @@
 #include "group.h"
 #include "pulser.h"
 #include "follower.h"
+#include "delayedgroup.h"
 #include "nvram.h"
 
 unsigned char Device::scratch[DEVICE_EEPROM_SIZE];
@@ -155,6 +156,9 @@ void Device::restore(uint8_t id)
             break;
         case FOLLOWER:
             device = new Follower(id,scratch);
+            break;
+        case DELAYEDGROUP:
+            device = new DelayedGroup(id,scratch);
             break;
         default:
             break;

@@ -101,16 +101,16 @@ void Dimmer::press(uint8_t button,uint8_t previousState)
     bool switchOff = 0;
     if(button == _buttonPlus)
     {
-        uint8_t otherState = buttonStatus(buttons[_buttonMin]);
-        if(otherState == 0)
+        uint8_t otherState = buttonStatus(_buttonMin);
+        if(otherState == PRESSED)
             switchOff = 1;
         else
             _brightness = constrain(_brightness + 1, 0, DIMMER_STEPS);
     }
     else if(button == _buttonMin)
     {
-        uint8_t otherState = buttonStatus(buttons[_buttonPlus]);
-        if(otherState == 0)
+        uint8_t otherState = buttonStatus(_buttonPlus);
+        if(otherState == PRESSED)
             switchOff = 1;
         else
             _brightness = constrain(_brightness - 1, 0, DIMMER_STEPS);

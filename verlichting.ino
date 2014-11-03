@@ -743,7 +743,7 @@ void i2cScan()
 
 }
 
-uint8_t buttonStatus(int button)
+uint8_t buttonStatus(uint8_t button)
 {
     for(uint8_t i=0;i<NUM_BUTTONS;i++)
     {

@@ -15,7 +15,7 @@ extern const uint8_t pwms[NUM_PWMS];
 #define PRESSED 0
 #define RELEASED 1
 
-uint8_t buttonStatus(int button);
+uint8_t buttonStatus(uint8_t button);
 extern uint8_t verbose;
 
 #endif

@@ -18,6 +18,7 @@ Group::Group(uint8_t id, unsigned char *initData) : Device(id,initData)
 
 Group::Group(uint8_t id, uint8_t button) : Device(id, NO_NVSLOT, GROUP)
 {
+    memset(_memberBitmap, 0, sizeof(_memberBitmap));
     _button = button;
     memset(_memberBitmap,0,sizeof(_memberBitmap));
     init();
