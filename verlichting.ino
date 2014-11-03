@@ -649,6 +649,10 @@ void handleInput()
     {
         digitalClockDisplay();
     }
+    else if(!strcmp(tokens[0],"freeze"))
+    {
+        while(1);
+    }
     else if(!strcmp(tokens[0],"settime"))
     {
         if(tidx == 2)
