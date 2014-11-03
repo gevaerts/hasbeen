@@ -26,6 +26,7 @@ Relay::Relay(uint8_t id, uint8_t nvSlot, uint8_t board, uint8_t relay, enum Devi
     _relay = relay;
     _relayState = 0;
     _invert = 0;
+    _lastRefresh = 0;
     setOn(_relayState);
 }
 
@@ -38,6 +39,7 @@ Relay::Relay(uint8_t id, unsigned char *initData): Device(id,initData)
     _board = initData[_offset++];
     _relay = initData[_offset++];
     _invert = initData[_offset++];
+    _lastRefresh = 0;
     // _relayState will be restored in restoreState(), so nothing to do here
 }
 
@@ -109,13 +111,18 @@ void Relay::loop()
     {
         // Every 30 seconds, we request a delayed relay off (which means on for inverted devices).
         // This will make the lights go on if we lose i2c or otherwise lock up.
-        if (millis() > _lastRefresh + 30000)
+        if (millis() > _lastRefresh + 10000)
         {
+            if(verbose)
+            {
+                Serial.print(F("delayed on for device "));
+                Serial.println(getId());
+            }
             _lastRefresh = millis();
             Device *rb = Device::getDeviceForId(_board);
             if(rb != NULL && rb->getType()==RELAYBOARD)
             {
-                ((RelayBoard *)rb)->delayedSetOn(_relay, 0, 60);
+                ((RelayBoard *)rb)->delayedSetOn(_relay, 0, 20);
             }
         }
     }
