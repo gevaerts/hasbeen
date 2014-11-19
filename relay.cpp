@@ -109,7 +109,7 @@ void Relay::loop()
 {
     if(_invert) // inverted relays are the important ones!
     {
-        // Every 30 seconds, we request a delayed relay off (which means on for inverted devices).
+        // Every 10 seconds, we request a delayed relay off (which means on for inverted devices).
         // This will make the lights go on if we lose i2c or otherwise lock up.
         if (millis() > _lastRefresh + 10000)
         {
@@ -122,7 +122,7 @@ void Relay::loop()
             Device *rb = Device::getDeviceForId(_board);
             if(rb != NULL && rb->getType()==RELAYBOARD)
             {
-                ((RelayBoard *)rb)->delayedSetOn(_relay, 0, 20);
+                ((RelayBoard *)rb)->delayedSetOn(_relay, 0, 30);
             }
         }
     }
