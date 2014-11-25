@@ -107,6 +107,7 @@ bool Relay::isType(enum DeviceType type)
 
 void Relay::loop()
 {
+#ifdef USE_RELAY_FAILSAFE
     if(_invert) // inverted relays are the important ones!
     {
         // Every 10 seconds, we request a delayed relay off (which means on for inverted devices).
@@ -126,6 +127,7 @@ void Relay::loop()
             }
         }
     }
+#endif
     Device::loop();
 }
 

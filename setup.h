@@ -3,6 +3,8 @@
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
+//#define USE_RELAY_FAILSAFE
+
 #define NUM_PWMS 12
 #define NUM_BUTTONS 50
 #define DEVICE_EEPROM_BASE 128
