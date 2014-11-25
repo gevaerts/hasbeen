@@ -49,12 +49,16 @@ uint8_t RelayBoard::saveConfig(unsigned char *initData)
 
 void RelayBoard::setOn(uint8_t relay,uint8_t state)
 {
+    status1(1);
     _board->click(relay, state, 1);
+    status1(0);
 }
 
 void RelayBoard::delayedSetOn(uint8_t relay,uint8_t state, int seconds)
 {
+    status1(1);
     _board->click(relay, state, 1 + seconds * 13);
+    status1(0);
 }
 
 void RelayBoard::printInfo()

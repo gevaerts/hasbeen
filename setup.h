@@ -17,5 +17,8 @@ extern const uint8_t pwms[NUM_PWMS];
 
 uint8_t buttonStatus(uint8_t button);
 extern uint8_t verbose;
+void status1(bool on);
+void status2(bool on);
+
 
 #endif

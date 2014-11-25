@@ -54,7 +54,9 @@ uint8_t Device::restoreState()
     uint8_t data = 0;
     if(_nvSlot != NO_NVSLOT)
     {
+        status1(1);
         NVRAM.getRAM(_nvSlot, &data, 1);
+        status1(0);
     }
     return data;
 }
@@ -62,7 +64,9 @@ void Device::saveState(uint8_t data)
 {
     if(_nvSlot != NO_NVSLOT)
     {
+        status1(1);
         NVRAM.setRAM(_nvSlot, &data, 1);
+        status1(0);
     }
 }
 

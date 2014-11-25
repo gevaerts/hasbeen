@@ -40,6 +40,13 @@ int freeRam ()
 void setup()
 {
     wdt_disable();
+
+    pinMode(STATUS1,OUTPUT);
+    pinMode(STATUS2,OUTPUT);
+
+    status1(1);
+    status2(1);
+    // TWBR=100000L // 100 kHz
     Wire.begin();
     Serial.begin(115200);
     Serial.println(F("Init begin"));
@@ -74,6 +81,8 @@ void setup()
     Serial.println(F("Init done"));
     Serial.print(F("Free memory: "));
     Serial.println(freeRam());
+    status1(0);
+    status2(0);
 }
 
 void digitalClockDisplay(){
@@ -762,21 +771,27 @@ uint8_t buttonStatus(uint8_t button)
     return RELEASED;
 }
 
-bool status = 0;
+void status1(bool on)
+{
+    digitalWrite(STATUS1,on);
+}
+
+void status2(bool on)
+{
+    digitalWrite(STATUS2,on);
+}
+
 unsigned long last = 0;
 void loop()
 {
-    if(iteration%50 == 0)
-    {
-        status = !status;
-        pinMode(STATUS1,OUTPUT);
-        pinMode(STATUS2,OUTPUT);
-        digitalWrite(STATUS1,status);
-        digitalWrite(STATUS2,!status);
-    }
 
     delay(10);
     iteration++;
+
+    if(iteration%20 == 0)
+    {
+        status2(1);
+    }
 
     long interval = millis() - last;
     last = millis();
@@ -849,5 +864,10 @@ void loop()
         {
             d->loop();
         }
+    }
+
+    if(iteration%50 == 0)
+    {
+        status2(0);
     }
 }
