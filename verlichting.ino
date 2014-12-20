@@ -806,7 +806,7 @@ void loop()
     delay(10);
     iteration++;
 
-    if(iteration%20 == 0)
+    if(iteration%50 == 0)
     {
         status2(1);
     }
@@ -884,7 +884,7 @@ void loop()
         }
     }
 
-    if(iteration%50 == 0)
+    if(iteration%50 == 5)
     {
         status2(0);
     }
