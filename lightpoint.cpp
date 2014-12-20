@@ -55,7 +55,7 @@ void Lightpoint::printDefinition(uint8_t first)
         sprintf(buffer,"define lightpoint %d %d %d %d %d",getId(), getNVSlot(), getBoard(), getRelay(), _button);
         Serial.println(buffer);
     }
-    Device::printDefinition(0);
+    Relay::printDefinition(0);
 };
 
 bool Lightpoint::isType(enum DeviceType type)
