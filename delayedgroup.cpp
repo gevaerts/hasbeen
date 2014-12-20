@@ -141,7 +141,7 @@ void DelayedGroup::printDefinition(uint8_t first)
         {
             if(isMember(i))
             {
-                sprintf(buffer,"delayedgroup add %d %d",getId(), i);
+                sprintf(buffer,"group add %d %d",getId(), i);
                 Serial.println(buffer);
             }
         }
