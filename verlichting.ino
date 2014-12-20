@@ -54,7 +54,7 @@ void setup()
     status1(1);
     status2(1);
     Wire.begin();
-    Serial1.begin(115200);
+    Serial1.begin(19200);
     Serial1.println(F("Init begin"));
 
     setSyncProvider(RTC.get);
