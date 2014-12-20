@@ -110,6 +110,7 @@ void printDigits(int digits){
 
 char line[64];
 char lidx = 0;
+bool echo = false;
 
 void handleInput()
 {
@@ -152,6 +153,17 @@ void handleInput()
     else if(!strcmp(tokens[0],"scan"))
     {
         i2cScan();
+    }
+    else if(!strcmp(tokens[0],"echo"))
+    {
+        if (tidx == 2 && !strcmp(tokens[1],"off"))
+        {
+            echo = false;
+        }
+        else
+        {
+            echo = true;
+        }
     }
     else if(!strcmp(tokens[0],"cleareeprom") && tidx == 1)
     {
@@ -701,13 +713,19 @@ void serialEvent()
         int c = Serial.read();
         if(c >= 0)
         {
-            if(lidx >= 63 || c == '\n')
+            if(echo)
+                Serial.write(c);
+            if(lidx >= 63 || c == '\n' || c == '\r')
             {
+                if(echo)
+                    Serial.println();
+                Serial.write(19);
                 line[lidx] = 0;
                 Serial.print(F("Input line : '"));
                 Serial.print(line);
                 Serial.println(F("'"));
                 handleInput();
+                Serial.write(17);
                 lidx = 0;
                 continue;
             }
