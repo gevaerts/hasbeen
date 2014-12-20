@@ -714,6 +714,7 @@ void handleInput()
 
 void serialEvent1()
 {
+    Serial1.write(19);
     while(Serial1.available())
     {
         int c = Serial1.read();
@@ -725,19 +726,18 @@ void serialEvent1()
             {
                 if(echo)
                     Serial1.println();
-                Serial1.write(19);
                 line[lidx] = 0;
                 Serial1.print(F("Input line : '"));
                 Serial1.print(line);
                 Serial1.println(F("'"));
                 handleInput();
-                Serial1.write(17);
                 lidx = 0;
                 continue;
             }
             line[lidx++] = c;
         }
     }
+    Serial1.write(17);
 }
 
 void i2cScan()
