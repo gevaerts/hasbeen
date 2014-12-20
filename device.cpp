@@ -41,7 +41,7 @@ Device::Device(uint8_t id, unsigned char *initData)
 Device::~Device()
 {
     unregisterButtons(this);
-    Serial.println(F("Deleting device"));
+    Serial1.println(F("Deleting device"));
     _type = UNDEFINED;
     uint16_t baseAddress = _id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
     scratch[0] = _type;
@@ -85,16 +85,16 @@ uint8_t Device::saveConfig(unsigned char *initData)
 void Device::saveSettings()
 {
     uint8_t size = saveConfig(scratch);
-    Serial.print(F("Saved "));
-    Serial.print(size);
-    Serial.print(F(" bytes for "));
-    Serial.print(getTypeName());
-    Serial.print(F(" "));
-    Serial.print(getName());
+    Serial1.print(F("Saved "));
+    Serial1.print(size);
+    Serial1.print(F(" bytes for "));
+    Serial1.print(getTypeName());
+    Serial1.print(F(" "));
+    Serial1.print(getName());
 
     if(size > DEVICE_EEPROM_SIZE)
     {
-        Serial.println(F("Error! Save size too large"));
+        Serial1.println(F("Error! Save size too large"));
     }
     uint16_t baseAddress = _id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
 
@@ -106,14 +106,14 @@ void Device::saveSettings()
 
 void Device::printInfo()
 {
-    Serial.print(F("device id "));
-    Serial.println(_id);
-    Serial.print(F("\tdevice name "));
-    Serial.println(_name);
-    Serial.print(F("\tdevice type "));
-    Serial.println(getTypeName());
-    Serial.print(F("\tNVRAM slot "));
-    Serial.println(_nvSlot);
+    Serial1.print(F("device id "));
+    Serial1.println(_id);
+    Serial1.print(F("\tdevice name "));
+    Serial1.println(_name);
+    Serial1.print(F("\tdevice type "));
+    Serial1.println(getTypeName());
+    Serial1.print(F("\tNVRAM slot "));
+    Serial1.println(_nvSlot);
 }
 
 void Device::setName(char *name)
@@ -205,7 +205,7 @@ void Device::printDefinition(uint8_t first)
     {
         char buffer[40];
         sprintf(buffer,"setname %d %s",_id,_name);
-        Serial.println(buffer);
+        Serial1.println(buffer);
     }
 }
 

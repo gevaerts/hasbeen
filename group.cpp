@@ -40,18 +40,18 @@ uint8_t Group::saveConfig(unsigned char *initData)
 void Group::printInfo()
 {
     Device::printInfo();
-    Serial.print(F("\tmembers "));
+    Serial1.print(F("\tmembers "));
     for(int i=0;i<sizeof(_memberBitmap)*8;i++)
     {
         if(isMember(i))
         {
-            Serial.print(i);
-            Serial.print(F(" "));
+            Serial1.print(i);
+            Serial1.print(F(" "));
         }
     }
-    Serial.println();
-    Serial.print(F("\tbutton # "));
-    Serial.println(_button);
+    Serial1.println();
+    Serial1.print(F("\tbutton # "));
+    Serial1.println(_button);
 }
 
 void Group::addMember(uint8_t id)
@@ -131,13 +131,13 @@ void Group::printDefinition(uint8_t first)
     {
         char buffer[40];
         sprintf(buffer,"define group %d %d",getId(), _button);
-        Serial.println(buffer);
+        Serial1.println(buffer);
         for(int i=0;i<sizeof(_memberBitmap)*8;i++)
         {
             if(isMember(i))
             {
                 sprintf(buffer,"group add %d %d",getId(), i);
-                Serial.println(buffer);
+                Serial1.println(buffer);
             }
         }
     }

@@ -59,14 +59,14 @@ uint8_t Relay::saveConfig(unsigned char *initData)
 void Relay::printInfo()
 {
     Device::printInfo();
-    Serial.print(F("\tboard # "));
-    Serial.println(_board);
-    Serial.print(F("\trelay # "));
-    Serial.println(_relay);
-    Serial.print(F("\tinvert? "));
-    Serial.println(_invert);
-    Serial.print(F("\tcurrent relay state "));
-    Serial.println(_relayState);
+    Serial1.print(F("\tboard # "));
+    Serial1.println(_board);
+    Serial1.print(F("\trelay # "));
+    Serial1.println(_relay);
+    Serial1.print(F("\tinvert? "));
+    Serial1.println(_invert);
+    Serial1.print(F("\tcurrent relay state "));
+    Serial1.println(_relayState);
 }
 
 void Relay::setOn(uint8_t state)
@@ -92,7 +92,7 @@ void Relay::printDefinition(uint8_t first)
     {
         char buffer[40];
         sprintf(buffer,"setinvert %d %d",getId(), _invert);
-        Serial.println(buffer);
+        Serial1.println(buffer);
     }
     Device::printDefinition(0);
 };
@@ -116,8 +116,8 @@ void Relay::loop()
         {
             if(verbose)
             {
-                Serial.print(F("delayed on for device "));
-                Serial.println(getId());
+                Serial1.print(F("delayed on for device "));
+                Serial1.println(getId());
             }
             _lastRefresh = millis();
             Device *rb = Device::getDeviceForId(_board);

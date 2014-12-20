@@ -72,18 +72,18 @@ uint8_t Dimmer::saveConfig(unsigned char *initData)
 void Dimmer::printInfo()
 {
     Relay::printInfo();
-    Serial.print(F("\tbutton + # "));
-    Serial.println(_buttonPlus);
-    Serial.print(F("\tbutton - # "));
-    Serial.println(_buttonMin);
-    Serial.print(F("\tpwm # "));
-    Serial.println(_pwm);
-    Serial.print(F("\tmin output "));
-    Serial.println(_min);
-    Serial.print(F("\tmax output "));
-    Serial.println(_max);
-    Serial.print(F("\tcurrent brightness "));
-    Serial.println(_brightness);
+    Serial1.print(F("\tbutton + # "));
+    Serial1.println(_buttonPlus);
+    Serial1.print(F("\tbutton - # "));
+    Serial1.println(_buttonMin);
+    Serial1.print(F("\tpwm # "));
+    Serial1.println(_pwm);
+    Serial1.print(F("\tmin output "));
+    Serial1.println(_min);
+    Serial1.print(F("\tmax output "));
+    Serial1.println(_max);
+    Serial1.print(F("\tcurrent brightness "));
+    Serial1.println(_brightness);
 }
 
 void Dimmer::writeBrightness()
@@ -135,9 +135,9 @@ void Dimmer::printDefinition(uint8_t first)
     {
         char buffer[40];
         sprintf(buffer,"define dimmer %d %d %d %d %d %d %d",getId(), getNVSlot(), getBoard(), getRelay(), _buttonPlus, _buttonMin, _pwm);
-        Serial.println(buffer);
+        Serial1.println(buffer);
         sprintf(buffer,"calibrate %d %d %d",getId(), _min, _max);
-        Serial.println(buffer);
+        Serial1.println(buffer);
     }
     Relay::printDefinition(0);
 };
