@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <bv4627.h>
+#include <bv4242.h>
 #include <Wire.h>
 #include "setup.h"
 #include "lightpoint.h"
@@ -27,6 +28,8 @@ unsigned long lastChange[NUM_BUTTONS];
 
 uint8_t buttonAliases[NUM_BUTTONS];
 
+BV4242 display(0x3d);
+
 long longest = -1;
 uint8_t verbose = 0;
 
@@ -44,9 +47,12 @@ void setup()
     pinMode(STATUS1,OUTPUT);
     pinMode(STATUS2,OUTPUT);
 
+    display.lcd_contrast(22);  // 5V contrast
+    display.clear(); // display
+    display.print("* Verlichting *");
+
     status1(1);
     status2(1);
-    // TWBR=100000L // 100 kHz
     Wire.begin();
     Serial.begin(115200);
     Serial.println(F("Init begin"));
