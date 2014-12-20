@@ -206,7 +206,7 @@ void handleInput()
                     Serial.print(i,DEC);
                     Serial.print(F(" "));
                     Serial.print(buttonAliases[i],DEC);
-                    Serial.print(F("\n"));
+                    Serial.println();
                 }
             }
         }
