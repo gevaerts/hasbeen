@@ -6,6 +6,7 @@
 void RelayBoard::init()
 {
     _board = new BV4627(_address);
+    _board->reset();
 }
 
 RelayBoard::RelayBoard(uint8_t id, uint8_t address) : Device(id, NO_NVSLOT, RELAYBOARD)
