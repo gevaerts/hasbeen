@@ -2,8 +2,7 @@
 #define RELAYBOARD_H
 
 #include "device.h"
-#include <bv4627.h>
-#include <Wire.h>
+#include "bv4627.h"
 
 class RelayBoard: public Device
 {

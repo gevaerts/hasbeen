@@ -1,12 +1,10 @@
-#include <DS1307RTC.h>
+#include "DS1307RTC.h"
 
 #include <Time.h>
 
 #include <Arduino.h>
 #include <EEPROM.h>
-#include <bv4627.h>
-#include <bv4242.h>
-#include <Wire.h>
+#include <I2C.h>
 #include "setup.h"
 #include "lightpoint.h"
 #include "dimmer.h"
@@ -28,8 +26,6 @@ unsigned long lastChange[NUM_BUTTONS];
 
 uint8_t buttonAliases[NUM_BUTTONS];
 
-BV4242 display(0x3d);
-
 long longest = -1;
 uint8_t verbose = 0;
 
@@ -47,13 +43,10 @@ void setup()
     pinMode(STATUS1,OUTPUT);
     pinMode(STATUS2,OUTPUT);
 
-    display.lcd_contrast(22);  // 5V contrast
-    display.clear(); // display
-    display.print("* Verlichting *");
-
     status1(1);
     status2(1);
-    Wire.begin();
+    I2c.begin();
+    I2c.timeOut(1000);
     Serial1.begin(19200);
     Serial1.println(F("Init begin"));
 
@@ -742,42 +735,7 @@ void serialEvent1()
 
 void i2cScan()
 {
-    byte error, address;
-    int nDevices;
-
-    Serial1.println(F("Scanning..."));
-
-    nDevices = 0;
-    for(address = 1; address < 127; address++ )
-    {
-        // The i2c_scanner uses the return value of
-        // the Write.endTransmisstion to see if
-        // a device did acknowledge to the address.
-        Wire.beginTransmission(address);
-        error = Wire.endTransmission();
-
-        if (error == 0)
-        {
-            Serial1.print(F("I2C device found at address 0x"));
-            if (address<16)
-                Serial1.print("0");
-            Serial1.println(address,HEX);
-
-            nDevices++;
-        }
-        else if (error==4)
-        {
-            Serial1.print(F("Unknow error at address 0x"));
-            if (address<16)
-                Serial1.print("0");
-            Serial1.println(address,HEX);
-        }
-    }
-    if (nDevices == 0)
-        Serial1.println(F("No I2C devices found\n"));
-    else
-        Serial1.println(F("done\n"));
-
+    I2c.scan();
 }
 
 uint8_t buttonStatus(uint8_t button)

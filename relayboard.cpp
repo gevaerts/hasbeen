@@ -1,8 +1,7 @@
 #include "Arduino.h"
 #include "relayboard.h"
 #include "setup.h"
-#include <bv4627.h>
-#include <Wire.h>
+#include "bv4627.h"
 
 void RelayBoard::init()
 {
