@@ -49,22 +49,22 @@ uint8_t DelayedGroup::saveConfig(unsigned char *initData)
 void DelayedGroup::printInfo()
 {
     Device::printInfo();
-    Serial1.print(F("\tmaster # "));
-    Serial1.println(_master);
-    Serial1.print(F("\tdelayOn "));
-    Serial1.println(_delayOn);
-    Serial1.print(F("\tdelayOff "));
-    Serial1.println(_delayOff);
-    Serial1.print(F("\tmembers "));
+    Serial.print(F("\tmaster # "));
+    Serial.println(_master);
+    Serial.print(F("\tdelayOn "));
+    Serial.println(_delayOn);
+    Serial.print(F("\tdelayOff "));
+    Serial.println(_delayOff);
+    Serial.print(F("\tmembers "));
     for(int i=0;i<sizeof(_memberBitmap)*8;i++)
     {
         if(isMember(i))
         {
-            Serial1.print(i);
-            Serial1.print(F(" "));
+            Serial.print(i);
+            Serial.print(F(" "));
         }
     }
-    Serial1.println();
+    Serial.println();
 }
 
 
@@ -136,13 +136,13 @@ void DelayedGroup::printDefinition(uint8_t first)
     {
         char buffer[40];
         sprintf(buffer,"define delayedgroup %d %d %d %d",getId(), _master, _delayOn, _delayOff);
-        Serial1.println(buffer);
+        Serial.println(buffer);
         for(int i=0;i<sizeof(_memberBitmap)*8;i++)
         {
             if(isMember(i))
             {
                 sprintf(buffer,"group add %d %d",getId(), i);
-                Serial1.println(buffer);
+                Serial.println(buffer);
             }
         }
     }

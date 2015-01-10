@@ -44,12 +44,12 @@ uint8_t Follower::saveConfig(unsigned char *initData)
 void Follower::printInfo()
 {
     Relay::printInfo();
-    Serial1.print(F("\tmaster # "));
-    Serial1.println(_master);
-    Serial1.print(F("\tdelayOn "));
-    Serial1.println(_delayOn);
-    Serial1.print(F("\tdelayOff "));
-    Serial1.println(_delayOff);
+    Serial.print(F("\tmaster # "));
+    Serial.println(_master);
+    Serial.print(F("\tdelayOn "));
+    Serial.println(_delayOn);
+    Serial.print(F("\tdelayOff "));
+    Serial.println(_delayOff);
 }
 
 void Follower::printDefinition(uint8_t first)
@@ -57,7 +57,7 @@ void Follower::printDefinition(uint8_t first)
     {
         char buffer[40];
         sprintf(buffer,"define follower %d %d %d %d %d %d",getId(), getBoard(), getRelay(), _master, _delayOn, _delayOff);
-        Serial1.println(buffer);
+        Serial.println(buffer);
     }
     Device::printDefinition(0);
 };

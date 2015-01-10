@@ -39,10 +39,10 @@ uint8_t Pulser::saveConfig(unsigned char *initData)
 void Pulser::printInfo()
 {
     Relay::printInfo();
-    Serial1.print(F("\tbutton # "));
-    Serial1.println(_button);
-    Serial1.print(F("\ttime "));
-    Serial1.println(_time);
+    Serial.print(F("\tbutton # "));
+    Serial.println(_button);
+    Serial.print(F("\ttime "));
+    Serial.println(_time);
 }
 
 void Pulser::printDefinition(uint8_t first)
@@ -50,7 +50,7 @@ void Pulser::printDefinition(uint8_t first)
     {
         char buffer[40];
         sprintf(buffer,"define pulser %d %d %d %d %d",getId(), getBoard(), getRelay(), _button, _time);
-        Serial1.println(buffer);
+        Serial.println(buffer);
     }
     Device::printDefinition(0);
 };

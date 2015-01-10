@@ -28,11 +28,11 @@ RelayBoard::~RelayBoard()
 
 void RelayBoard::setAddress(uint8_t address)
 {
-    Serial1.print(F("Setting relayboard address to "));
-    Serial1.print(address,DEC);
-    Serial1.print(F(" (0x"));
-    Serial1.print(address,HEX);
-    Serial1.println(F(")"));
+    Serial.print(F("Setting relayboard address to "));
+    Serial.print(address,DEC);
+    Serial.print(F(" (0x"));
+    Serial.print(address,HEX);
+    Serial.println(F(")"));
 
     _board->setaddress(address<<1);
     _address = address;
@@ -63,20 +63,20 @@ void RelayBoard::delayedSetOn(uint8_t relay,uint8_t state, int seconds)
 void RelayBoard::printInfo()
 {
     Device::printInfo();
-    Serial1.print(F("\taddress 0x"));
-    Serial1.println(_address,HEX);
+    Serial.print(F("\taddress 0x"));
+    Serial.println(_address,HEX);
 
     uint16_t k=1;
     char s[10];
     // device id
-    Serial1.println();
-    Serial1.print(F("\tDevice ID "));
-    Serial1.println(_board->deviceid());
+    Serial.println();
+    Serial.print(F("\tDevice ID "));
+    Serial.println(_board->deviceid());
     // firmware version
     *s=0;
     _board->version(s);
-    Serial1.print(F("\tFirmware Version "));
-    Serial1.println(s);
+    Serial.print(F("\tFirmware Version "));
+    Serial.println(s);
 }
 
 void RelayBoard::printDefinition(uint8_t first)
@@ -84,7 +84,7 @@ void RelayBoard::printDefinition(uint8_t first)
     {
         char buffer[40];
         sprintf(buffer,"define relayboard %d %d",getId(), _address);
-        Serial1.println(buffer);
+        Serial.println(buffer);
     }
     Device::printDefinition(0);
 };

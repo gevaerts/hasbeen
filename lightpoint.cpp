@@ -34,8 +34,8 @@ uint8_t Lightpoint::saveConfig(unsigned char *initData)
 void Lightpoint::printInfo()
 {
     Relay::printInfo();
-    Serial1.print(F("\tbutton # "));
-    Serial1.println(_button);
+    Serial.print(F("\tbutton # "));
+    Serial.println(_button);
 }
 
 void Lightpoint::press(uint8_t button, uint8_t previousState)
@@ -53,7 +53,7 @@ void Lightpoint::printDefinition(uint8_t first)
     {
         char buffer[40];
         sprintf(buffer,"define lightpoint %d %d %d %d %d",getId(), getNVSlot(), getBoard(), getRelay(), _button);
-        Serial1.println(buffer);
+        Serial.println(buffer);
     }
     Relay::printDefinition(0);
 };

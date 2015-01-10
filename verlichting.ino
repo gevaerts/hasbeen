@@ -47,17 +47,17 @@ void setup()
     status2(1);
     I2c.begin();
     I2c.timeOut(1000);
-    Serial1.begin(19200);
-    Serial1.println(F("Init begin"));
+    Serial.begin(115200);
+    Serial.println(F("Init begin"));
 
     setSyncProvider(RTC.get);
     if(timeStatus()!= timeSet)
     {
-        Serial1.println(F("Unable to sync with the RTC"));
+        Serial.println(F("Unable to sync with the RTC"));
     }
     else
     {
-        Serial1.println(F("RTC has set the system time"));
+        Serial.println(F("RTC has set the system time"));
         digitalClockDisplay();
     }
 
@@ -77,33 +77,33 @@ void setup()
         buttonState[i] = RELEASED;
     }
 
-    Serial1.println(F("Init done"));
-    Serial1.print(F("Free memory: "));
-    Serial1.println(freeRam());
+    Serial.println(F("Init done"));
+    Serial.print(F("Free memory: "));
+    Serial.println(freeRam());
     status1(0);
     status2(0);
 }
 
 void digitalClockDisplay(){
     // digital clock display of the time
-    Serial1.print(hour());
+    Serial.print(hour());
     printDigits(minute());
     printDigits(second());
-    Serial1.print(" ");
-    Serial1.print(day());
-    Serial1.print(" ");
-    Serial1.print(month());
-    Serial1.print(" ");
-    Serial1.print(year());
-    Serial1.println();
+    Serial.print(" ");
+    Serial.print(day());
+    Serial.print(" ");
+    Serial.print(month());
+    Serial.print(" ");
+    Serial.print(year());
+    Serial.println();
 }
 
 void printDigits(int digits){
     // utility function for digital clock display: prints preceding colon and leading 0
-    Serial1.print(":");
+    Serial.print(":");
     if(digits < 10)
-        Serial1.print('0');
-    Serial1.print(digits);
+        Serial.print('0');
+    Serial.print(digits);
 }
 
 
@@ -124,7 +124,7 @@ void handleInput()
         t = strtok(NULL, " ");
         if(tidx >= 10)
         {
-            Serial1.println(F("Parser error"));
+            Serial.println(F("Parser error"));
             return;
         }
     }
@@ -140,14 +140,14 @@ void handleInput()
     }
     else if(!strcmp(tokens[0],"stats"))
     {
-        Serial1.print(F("Milliseconds since start "));
-        Serial1.println(millis());
-        Serial1.print(F("Loops since start "));
-        Serial1.println(iteration);
-        Serial1.print(F("Average loop duration "));
-        Serial1.println(millis()/iteration);
-        Serial1.print(F("Longest loop duration "));
-        Serial1.println(longest);
+        Serial.print(F("Milliseconds since start "));
+        Serial.println(millis());
+        Serial.print(F("Loops since start "));
+        Serial.println(iteration);
+        Serial.print(F("Average loop duration "));
+        Serial.println(millis()/iteration);
+        Serial.print(F("Longest loop duration "));
+        Serial.println(longest);
     }
     else if(!strcmp(tokens[0],"scan"))
     {
@@ -201,15 +201,15 @@ void handleInput()
             {
                 if(buttonAliases[i] != 0xFF)
                 {
-                    Serial1.print(F("alias "));
-                    Serial1.print(i,DEC);
-                    Serial1.print(F(" "));
-                    Serial1.print(buttonAliases[i],DEC);
-                    Serial1.println();
+                    Serial.print(F("alias "));
+                    Serial.print(i,DEC);
+                    Serial.print(F(" "));
+                    Serial.print(buttonAliases[i],DEC);
+                    Serial.println();
                 }
             }
         }
-        Serial1.println(F("save"));
+        Serial.println(F("save"));
     }
     else if(!strcmp(tokens[0],"on"))
     {
@@ -221,7 +221,7 @@ void handleInput()
         }
         else
         {
-            Serial1.println(F("on <deviceId>"));
+            Serial.println(F("on <deviceId>"));
         }
     }
     else if(!strcmp(tokens[0],"off"))
@@ -234,7 +234,7 @@ void handleInput()
         }
         else
         {
-            Serial1.println(F("off <deviceId>"));
+            Serial.println(F("off <deviceId>"));
         }
     }
     else if(!strcmp(tokens[0],"devices"))
@@ -244,9 +244,9 @@ void handleInput()
             Device *d = Device::getDeviceForId(i);
             if(d!=NULL)
             {
-                Serial1.print(i);
-                Serial1.print(F(" : "));
-                Serial1.println(d->getName());
+                Serial.print(i);
+                Serial.print(F(" : "));
+                Serial.println(d->getName());
             }
         }
     }
@@ -254,20 +254,20 @@ void handleInput()
     {
         for(uint8_t i=0;i<NUM_BUTTONS;i++)
         {
-            Serial1.print(i);
-            Serial1.print(F(" : "));
-            Serial1.print(buttonState[i]);
+            Serial.print(i);
+            Serial.print(F(" : "));
+            Serial.print(buttonState[i]);
             Device *d = Device::getDeviceForButton(i);
             if(d!=NULL)
             {
-                Serial1.print(F(" : "));
-                Serial1.print(d->getId());
-                Serial1.print(F(" : "));
-                Serial1.println(d->getName());
+                Serial.print(F(" : "));
+                Serial.print(d->getId());
+                Serial.print(F(" : "));
+                Serial.println(d->getName());
             }
             else
             {
-                Serial1.println(F(" : <>"));
+                Serial.println(F(" : <>"));
             }
         }
     }
@@ -379,7 +379,7 @@ void handleInput()
         }
         else
         {
-            Serial1.println(F("group {add|remove} <groupId> <deviceId>"));
+            Serial.println(F("group {add|remove} <groupId> <deviceId>"));
         }
     }
     else if(!strcmp(tokens[0],"define") && tidx > 1)
@@ -388,7 +388,7 @@ void handleInput()
         {
             if(tidx != 9)
             {
-                Serial1.println(F("define dimmer <id> <nvSlot> <board> <relay> <buttonPlus> <buttonMin> <pwm>"));
+                Serial.println(F("define dimmer <id> <nvSlot> <board> <relay> <buttonPlus> <buttonMin> <pwm>"));
             }
             else
             {
@@ -402,21 +402,21 @@ void handleInput()
                 pwm = atoi(tokens[8]);
 
                 if(id < 0 || id >= NUM_DEVICES)
-                    Serial1.println(F("id out of range"));
+                    Serial.println(F("id out of range"));
                 else if(Device::getDeviceForId(id) != NULL)
-                    Serial1.println(F("id not empty"));
+                    Serial.println(F("id not empty"));
                 else if(relay < 1 || relay > 8)
-                    Serial1.println(F("relay out of range"));
+                    Serial.println(F("relay out of range"));
                 else if(buttonPlus < 0 || buttonPlus >= NUM_BUTTONS)
-                    Serial1.println(F("buttonPlus out of range"));
+                    Serial.println(F("buttonPlus out of range"));
                 else if(Device::getDeviceForButton(buttonPlus) != NULL)
-                    Serial1.println(F("buttonPlus already in use"));
+                    Serial.println(F("buttonPlus already in use"));
                 else if(buttonMin < 0 || buttonMin >= NUM_BUTTONS)
-                    Serial1.println(F("buttonMin out of range"));
+                    Serial.println(F("buttonMin out of range"));
                 else if(Device::getDeviceForButton(buttonMin) != NULL)
-                    Serial1.println(F("buttonMin already in use"));
+                    Serial.println(F("buttonMin already in use"));
                 else if(pwm < 0 || pwm >= NUM_PWMS)
-                    Serial1.println(F("pwm out of range"));
+                    Serial.println(F("pwm out of range"));
                 else
                 {
                     Device *d = new Dimmer(id, nvslot, board, relay,buttonPlus,buttonMin,pwm);
@@ -428,7 +428,7 @@ void handleInput()
         {
             if(tidx != 4)
             {
-                Serial1.println(F("define group <id> <button>"));
+                Serial.println(F("define group <id> <button>"));
             }
             else
             {
@@ -437,13 +437,13 @@ void handleInput()
                 button = atoi(tokens[3]);
 
                 if(id < 0 || id >= NUM_DEVICES)
-                    Serial1.println(F("id out of range"));
+                    Serial.println(F("id out of range"));
                 else if(Device::getDeviceForId(id) != NULL)
-                    Serial1.println(F("id not empty"));
+                    Serial.println(F("id not empty"));
                 else if(button < 0 || button >= NUM_BUTTONS)
-                    Serial1.println(F("button out of range"));
+                    Serial.println(F("button out of range"));
                 else if(Device::getDeviceForButton(button) != NULL)
-                    Serial1.println(F("button already in use"));
+                    Serial.println(F("button already in use"));
                 else
                 {
                     Device *d = new Group(id, button);
@@ -455,7 +455,7 @@ void handleInput()
         {
             if(tidx != 6)
             {
-                Serial1.println(F("define delayedgroup <id> <master> <delayOn> <delayOff>"));
+                Serial.println(F("define delayedgroup <id> <master> <delayOn> <delayOff>"));
             }
             else
             {
@@ -467,11 +467,11 @@ void handleInput()
                 delayOff = atoi(tokens[5]);
 
                 if(id < 0 || id >= NUM_DEVICES)
-                    Serial1.println(F("id out of range"));
+                    Serial.println(F("id out of range"));
                 else if(Device::getDeviceForId(id) != NULL)
-                    Serial1.println(F("id not empty"));
+                    Serial.println(F("id not empty"));
                 else if(master < 0 || master >= NUM_DEVICES)
-                    Serial1.println(F("master out of range"));
+                    Serial.println(F("master out of range"));
                 else
                 {
                     Device *d = new DelayedGroup(id, master, delayOn, delayOff);
@@ -483,7 +483,7 @@ void handleInput()
         {
             if(tidx != 7)
             {
-                Serial1.println(F("define pulser <id> <board> <relay> <button> <time>"));
+                Serial.println(F("define pulser <id> <board> <relay> <button> <time>"));
             }
             else
             {
@@ -496,15 +496,15 @@ void handleInput()
                 time = atoi(tokens[6]);
 
                 if(id < 0 || id >= NUM_DEVICES)
-                    Serial1.println(F("id out of range"));
+                    Serial.println(F("id out of range"));
                 else if(Device::getDeviceForId(id) != NULL)
-                    Serial1.println(F("id not empty"));
+                    Serial.println(F("id not empty"));
                 else if(relay < 1 || relay > 8)
-                    Serial1.println(F("relay out of range"));
+                    Serial.println(F("relay out of range"));
                 else if(button < 0 || button >= NUM_BUTTONS)
-                    Serial1.println(F("button out of range"));
+                    Serial.println(F("button out of range"));
                 else if(Device::getDeviceForButton(button) != NULL)
-                    Serial1.println(F("button already in use"));
+                    Serial.println(F("button already in use"));
                 else
                 {
                     Device *d = new Pulser(id, board, relay, button, time);
@@ -516,7 +516,7 @@ void handleInput()
         {
             if(tidx != 8)
             {
-                Serial1.println(F("define follower <id> <board> <relay> <master> <delayOn> <delayOff"));
+                Serial.println(F("define follower <id> <board> <relay> <master> <delayOn> <delayOff"));
             }
             else
             {
@@ -530,13 +530,13 @@ void handleInput()
                 delayOff = atoi(tokens[7]);
 
                 if(id < 0 || id >= NUM_DEVICES)
-                    Serial1.println(F("id out of range"));
+                    Serial.println(F("id out of range"));
                 else if(Device::getDeviceForId(id) != NULL)
-                    Serial1.println(F("id not empty"));
+                    Serial.println(F("id not empty"));
                 else if(relay < 1 || relay > 8)
-                    Serial1.println(F("relay out of range"));
+                    Serial.println(F("relay out of range"));
                 else if(master < 0 || master >= NUM_DEVICES)
-                    Serial1.println(F("master out of range"));
+                    Serial.println(F("master out of range"));
                 else
                 {
                     Device *d = new Follower(id, board, relay, master, delayOn, delayOff);
@@ -548,7 +548,7 @@ void handleInput()
         {
             if(tidx != 7)
             {
-                Serial1.println(F("define lightpoint <id> <nvSlot> <board> <relay> <button>"));
+                Serial.println(F("define lightpoint <id> <nvSlot> <board> <relay> <button>"));
             }
             else
             {
@@ -560,15 +560,15 @@ void handleInput()
                 button = atoi(tokens[6]);
 
                 if(id < 0 || id >= NUM_DEVICES)
-                    Serial1.println(F("id out of range"));
+                    Serial.println(F("id out of range"));
                 else if(Device::getDeviceForId(id) != NULL)
-                    Serial1.println(F("id not empty"));
+                    Serial.println(F("id not empty"));
                 else if(relay < 1 || relay > 8)
-                    Serial1.println(F("relay out of range"));
+                    Serial.println(F("relay out of range"));
                 else if(button < 0 || button >= NUM_BUTTONS)
-                    Serial1.println(F("button out of range"));
+                    Serial.println(F("button out of range"));
                 else if(Device::getDeviceForButton(button) != NULL)
-                    Serial1.println(F("button already in use"));
+                    Serial.println(F("button already in use"));
                 else
                 {
                     Device *d = new Lightpoint(id, nvslot, board, relay,button);
@@ -580,7 +580,7 @@ void handleInput()
         {
             if(tidx != 4)
             {
-                Serial1.println(F("define relayboard <id> <address>"));
+                Serial.println(F("define relayboard <id> <address>"));
             }
             else
             {
@@ -589,9 +589,9 @@ void handleInput()
                 address = atoi(tokens[3]);
 
                 if(id < 0 || id >= NUM_DEVICES)
-                    Serial1.println(F("id out of range"));
+                    Serial.println(F("id out of range"));
                 else if(Device::getDeviceForId(id) != NULL)
-                    Serial1.println(F("id not empty"));
+                    Serial.println(F("id not empty"));
                 else
                 {
                     Device *d = new RelayBoard(id, address);
@@ -601,7 +601,7 @@ void handleInput()
         }
         else
         {
-            Serial1.println(F("define {dimmer|lightpoint|relayboard} ..."));
+            Serial.println(F("define {dimmer|lightpoint|relayboard} ..."));
         }
     }
     else if(!strcmp(tokens[0],"alias"))
@@ -614,7 +614,7 @@ void handleInput()
         }
         else
         {
-            Serial1.println(F("alias <button> <mapped_to>"));
+            Serial.println(F("alias <button> <mapped_to>"));
         }
     }
     else if(!strcmp(tokens[0],"save"))
@@ -627,11 +627,11 @@ void handleInput()
                 Device *d = Device::getDeviceForId(i);
                 if(d != NULL)
                 {
-                    Serial1.print(F("Saving "));
-                    Serial1.print(i);
-                    Serial1.print(F(" ..."));
+                    Serial.print(F("Saving "));
+                    Serial.print(i);
+                    Serial.print(F(" ..."));
                     d->saveSettings();
-                    Serial1.println(F("done"));
+                    Serial.println(F("done"));
                 }
             }
             for(uint8_t i=0;i<NUM_BUTTONS;i++)
@@ -645,11 +645,11 @@ void handleInput()
             Device *d = Device::getDeviceForId(id);
             if(d != NULL)
             {
-                Serial1.print(F("Saving "));
-                Serial1.print(id);
-                Serial1.print(F(" ... "));
+                Serial.print(F("Saving "));
+                Serial.print(id);
+                Serial.print(F(" ... "));
                 d->saveSettings();
-                Serial1.println(F(" ... done"));
+                Serial.println(F(" ... done"));
             }
             // Save one
         }
@@ -657,8 +657,8 @@ void handleInput()
     /*
        else if(!strcmp(tokens[0],"reset"))
        {
-       Serial1.println(F("Resetting"));
-       Serial1.flush();
+       Serial.println(F("Resetting"));
+       Serial.flush();
 
        noInterrupts();
        wdt_enable (WDTO_8S);
@@ -678,13 +678,13 @@ void handleInput()
         if(tidx == 2)
         {
             time_t t = atol(tokens[1]);
-            Serial1.println(t);
+            Serial.println(t);
             RTC.set(t);
             digitalClockDisplay();
         }
         else
         {
-            Serial1.println(F("settime <time_t>"));
+            Serial.println(F("settime <time_t>"));
         }
     }
     else if(!strcmp(tokens[0],"verbose"))
@@ -700,29 +700,29 @@ void handleInput()
     }
     else
     {
-        Serial1.print(F("Syntax error with token "));
-        Serial1.println(tokens[0]);
+        Serial.print(F("Syntax error with token "));
+        Serial.println(tokens[0]);
     }
 }
 
-void serialEvent1()
+void serialEvent()
 {
-    Serial1.write(19);
-    while(Serial1.available())
+    Serial.write(19);
+    while(Serial.available())
     {
-        int c = Serial1.read();
+        int c = Serial.read();
         if(c >= 0)
         {
             if(echo)
-                Serial1.write(c);
+                Serial.write(c);
             if(lidx >= 63 || c == '\n' || c == '\r')
             {
                 if(echo)
-                    Serial1.println();
+                    Serial.println();
                 line[lidx] = 0;
-                Serial1.print(F("Input line : '"));
-                Serial1.print(line);
-                Serial1.println(F("'"));
+                Serial.print(F("Input line : '"));
+                Serial.print(line);
+                Serial.println(F("'"));
                 handleInput();
                 lidx = 0;
                 continue;
@@ -730,7 +730,7 @@ void serialEvent1()
             line[lidx++] = c;
         }
     }
-    Serial1.write(17);
+    Serial.write(17);
 }
 
 void i2cScan()
@@ -809,26 +809,26 @@ void loop()
                 }
                 else
                 {
-                    Serial1.print(F("Unaliased button "));
-                    Serial1.print(i,DEC);
-                    Serial1.println(F(" pressed. This is not expected to work with all devices!"));
+                    Serial.print(F("Unaliased button "));
+                    Serial.print(i,DEC);
+                    Serial.println(F(" pressed. This is not expected to work with all devices!"));
                 }
 
                 if(verbose)
                 {
-                    Serial1.print(F("Button "));
-                    Serial1.print(i,DEC);
-                    Serial1.print(F(" aliased to "));
-                    Serial1.print(button,DEC);
-                    Serial1.println(F(" pressed"));
+                    Serial.print(F("Button "));
+                    Serial.print(i,DEC);
+                    Serial.print(F(" aliased to "));
+                    Serial.print(button,DEC);
+                    Serial.println(F(" pressed"));
                 }
                 Device *d = Device::getDeviceForButton(button);
                 if(d != NULL)
                 {
                     if(verbose)
                     {
-                        Serial1.print(F("Handled by device "));
-                        Serial1.println(d->getName());
+                        Serial.print(F("Handled by device "));
+                        Serial.println(d->getName());
                     }
                     uint8_t previous = buttonState[i];
                     if(changed)
