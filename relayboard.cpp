@@ -50,6 +50,15 @@ uint8_t RelayBoard::saveConfig(unsigned char *initData)
 void RelayBoard::setOn(uint8_t relay,uint8_t state)
 {
     status1(1);
+    if(verbose)
+    {
+        Serial.print(F("Setting relayboard "));
+        Serial.print(getId());
+        Serial.print(F(" relay "));
+        Serial.print(relay);
+        Serial.print(F(" to "));
+        Serial.println(state);
+    }
     _board->click(relay, state, 1);
     status1(0);
 }

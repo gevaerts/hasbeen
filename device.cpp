@@ -122,14 +122,14 @@ void Device::setName(char *name)
     _name[15]=0;
 }
 
-void Device::restore(uint8_t id)
+uint8_t Device::restore(uint8_t id)
 {
     Device *device = NULL;
     uint16_t baseAddress = id * DEVICE_EEPROM_SIZE + DEVICE_EEPROM_BASE;
     enum DeviceType type = (enum DeviceType) EEPROM.read(baseAddress);
 
     if(type == UNDEFINED)
-        return;
+        return 0;
 
     scratch[0] = type;
     for(uint16_t i=1;i<DEVICE_EEPROM_SIZE;i++)
@@ -171,6 +171,7 @@ void Device::restore(uint8_t id)
     {
         device->restoreState();
     }
+    return device != NULL;
 }
 
 Device *Device::getDeviceForButton(uint8_t button)

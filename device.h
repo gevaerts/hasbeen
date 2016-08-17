@@ -34,7 +34,7 @@ class Device
         void saveSettings();
         virtual void printInfo();
         virtual void press(uint8_t button,uint8_t previousState) {};
-        static void restore(uint8_t id);
+        static uint8_t restore(uint8_t id);
         static Device *getDeviceForButton(uint8_t button);
         static Device *getDeviceForId(uint8_t id);
         virtual void on();

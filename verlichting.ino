@@ -38,6 +38,7 @@ int freeRam ()
 
 void setup()
 {
+    int num_devices = 0;
     wdt_disable();
 
     pinMode(STATUS1,OUTPUT);
@@ -46,6 +47,8 @@ void setup()
     status1(1);
     status2(1);
     I2c.begin();
+    I2c.pullup(0);
+    //I2c.setSpeed(1);
     I2c.timeOut(1000);
     Serial.begin(115200);
     Serial.println(F("Init begin"));
@@ -67,7 +70,7 @@ void setup()
     }
     for(uint8_t i=0;i<NUM_DEVICES;i++)
     {
-        Device::restore(i);
+        num_devices += Device::restore(i);
     }
     for(uint8_t i=0;i<ARRAY_SIZE(buttonState);i++)
     {
@@ -78,6 +81,8 @@ void setup()
     }
 
     Serial.println(F("Init done"));
+    Serial.print(num_devices);
+    Serial.println(F(" devices present"));
     Serial.print(F("Free memory: "));
     Serial.println(freeRam());
     status1(0);
